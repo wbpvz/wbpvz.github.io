@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFFFFF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Выдача | WB PVZ</title>
+    <link rel="icon" href="logotype.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="splash-screen">
+        <div class="splash-content">
+            <img src="wb_pvz_logo_with_name.svg" alt="WB PVZ Logo" class="splash-image">
+            <div class="spinner splash-spinner"></div>
+        </div>
+    </div>
+
+    <div id="server-loading-screen" style="display: none;">
+        <div class="spinner"></div>
+        <h3 style="margin-top: 20px;">Немного подождите...</h3>
+        <p style="color: var(--text-secondary-color);">Идет загрузка данных с сервера</p>
+    </div>
+
+    <div id="global-loader-overlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="overlay"></div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="logotype.png" alt="WB" class="wb-icon">
+                <div class="sidebar-version"><br></div>
+            </div>
+            <div class="sidebar-orders" id="sidebar-orders">
+            </div>
+        </div>
+
+        <div class="main-content">
+            <header>
+                <div class="header-left-controls">
+                    <div class="toolbar-btn" id="burger-menu" title="Меню"><i class="fas fa-bars"></i></div>
+                    <div class="toolbar-btn" id="show-qr-btn" title="QR-код ПВЗ"><i class="fas fa-qrcode"></i></div>
+                    <div class="toolbar-btn" id="search-by-code-btn" title="Найти товар по ШК"><i class="fas fa-search"></i></div>
+                </div>
+                <nav class="main-nav">
+                    <div class="nav-center">
+                        <button class="nav-btn active" id="nav-issue-btn">
+                            <div class="nav-icon-wrapper">
+                                <img src="delivery.svg" alt="Выдача" class="nav-icon">
+                                <div class="nav-badge" id="order-count-badge" style="display: none;">0</div>
+                            </div>
+                            <span class="nav-text">Выдача</span>
+                        </button>
+                        <button class="nav-btn" id="nav-reception-btn">
+                            <div class="nav-icon-wrapper">
+                                <img src="accept.svg" alt="Приёмка" class="nav-icon">
+                            </div>
+                            <span class="nav-text">Приёмка</span>
+                        </button>
+                        <button class="nav-btn" id="nav-returns-btn">
+                            <div class="nav-icon-wrapper">
+                                <img src="returns.svg" alt="Возврат" class="nav-icon">
+                                <div class="nav-badge" id="returns-nav-badge" style="display: none;">0</div>
+                            </div>
+                            <span class="nav-text">Возврат</span>
+                        </button>
+                    </div>
+                </nav>
+                <div class="header-right-controls">
+                    <div id="connection-status" title="Статус сканера"><i class="fas fa-barcode"></i></div>
+                </div>
+            </header>
+
+            <div id="initial-screen-wrapper">
+                 <div class="top-left-panel">
+                    <div class="initial-panel-content">
+                        <h2>Отсканируйте QR-код клиента или курьера</h2>
+                        <div class="qr-code-placeholder">
+                            <img src="scaner.png" alt="Scan QR">
+                        </div>
+                        <p>или введите номер телефона и код</p>
+                        <div class="input-group">
+                            <label>Номер телефона :</label>
+                            <input type="text" id="order-identifier-input" placeholder="Последние 4 цифры" maxlength="4" inputmode="numeric">
+                        </div>
+                        <div class="input-group" id="client-code-group" style="display: none;">
+                            <label>Код клиента :</label>
+                            <input type="text" id="client-code" placeholder="Код клиента" maxlength="5" inputmode="numeric">
+                        </div>
+                        <button id="find-order-btn" class="primary-btn">Найти</button>
+                        
+                        <div class="bottom-spacer"></div>
+                        <button id="issue-from-return-btn-main" class="light-purple-btn full-width-btn">Выдать из отмены</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="issue-from-return-screen" style="display: none;">
+                <div class="restore-split-container">
+                     <div class="restore-left-panel">
+                         <h2>Выдача из отмены</h2>
+                         <div class="qr-code-placeholder" style="font-size: 8rem; margin: 10px 0;">
+                            <img src="scaner.png" alt="Scan QR">
+                         </div>
+                         <p>Введите данные клиента для поиска возврата.</p>
+                          <div class="input-group">
+                              <label>Номер телефона:</label>
+                              <input type="text" id="issue-return-identifier-input" placeholder="Последние 4 цифры" maxlength="4" inputmode="numeric">
+                          </div>
+                          <div class="input-group" id="issue-return-client-code-group" style="display: none;">
+                              <label>Код клиента:</label>
+                              <input type="text" id="issue-return-client-code" placeholder="Код клиента" maxlength="5" inputmode="numeric">
+                          </div>
+                          <button id="find-return-items-btn" class="primary-btn full-width-btn">Найти ячейки</button>
+                          <div style="margin-top: auto;">
+                            <button id="back-to-main-btn" class="secondary-btn full-width-btn">Назад</button>
+                          </div>
+                     </div>
+
+                     <div class="restore-right-panel">
+                        <h3>Выберите ячейку для возврата</h3>
+                        <div id="restore-cells-list" class="restore-cells-list">
+                            <div class="empty-state-text">Введите данные слева и нажмите "Найти", чтобы увидеть доступные ячейки.</div>
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+             <div class="fullscreen-modal" id="restore-items-selection-modal">
+                <div class="modal-content" style="max-width: 600px; text-align: left;">
+                    <h3>Выберите товары для выдачи</h3>
+                    <div id="restore-items-list" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin: 20px 0;">
+                        </div>
+                    <div class="modal-buttons-container">
+                        <button id="cancel-restore-btn" class="secondary-btn">Отмена</button>
+                        <button id="confirm-restore-btn" class="primary-btn">Перейти к выдаче</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pre-verification-screen" style="display: none;">
+                <div class="pv-container">
+                    <div class="pv-left-panel">
+                        <div class="pv-grey-header-block">
+                             <h3>Отсканируйте товары из ячейки:</h3>
+                             <div class="pv-cell-numbers" id="pv-cell-display">---</div>
+                             
+                             <div class="pv-main-stats">
+                                 Проверено: <strong id="pv-verified-count">0</strong> из <strong id="pv-total-count">0</strong>
+                             </div>
+                        </div>
+                        
+                        <div class="pv-courier-detailed-stats" id="pv-courier-stats" style="display: none;">
+                             <div>Проверено: <strong id="pv-courier-verified-val">0</strong></div>
+                             <div>ШК повреждено: <strong id="pv-courier-damaged-val">0</strong></div>
+                             <div>Не найдено: <strong id="pv-courier-notfound-val">0</strong></div>
+                        </div>
+
+                        <div id="pv-verified-items-list" class="pv-items-list" style="display:none;"></div> 
+                    </div>
+
+                    <div class="pv-right-panel">
+                         <div class="verification-input-group">
+                            <input type="text" id="pre-verification-code" placeholder="Введите код товара" maxlength="9" inputmode="numeric">
+                            <button id="pre-verify-btn" class="primary-btn icon-only"><i class="fas fa-check"></i></button>
+                        </div>
+                        
+                        <div class="pv-items-list-header">Ожидают проверки</div>
+                        
+                        <div id="pv-unverified-items-list" class="pv-items-list">
+                        </div>
+                        
+                        <div class="pv-bottom-controls">
+                            <button id="skip-all-verification-btn" class="light-purple-btn full-width-btn">Пропустить всё</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="order-view-container">
+                <div id="order-info-left-panel">
+                    <div class="order-info-scroll-area">
+                        <div class="info-block" id="display-identifier"></div>
+                        <div class="info-block">
+                            <div class="cell-display-box">
+                                <span class="info-label">Ячейка:</span>
+                                <span class="info-value-large" id="cell-number">---</span>
+                            </div>
+                        </div>
+                        <div class="order-stats">
+                            <div id="selected-info">Товары: <span id="selected-count">0</span> из <span id="total-count-selected">0</span></div>
+                        </div>
+
+                        <div id="packages-controls-container">
+                             <div class="packages-label">Пакетов: <span id="total-packages-display">0</span> шт.</div>
+                             <button id="add-package-btn" class="dashed-add-btn">
+                                <i class="fas fa-plus"></i>
+                             </button>
+                        </div>
+
+                        <div id="lost-items-trigger">Просканировать утерянные</div>
+
+                        <div id="payment-details-collapsible">
+                            <div class="payment-details-summary" id="payment-details-summary">
+                                <div class="total-price-col">
+                                    <span class="price-label">К оплате:</span>
+                                    <img src="wallet.svg" alt="wallet" class="wallet-icon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/60/60484.png'">
+                                    <span class="price-val" id="total-price-value" style="color: var(--primary);">0.00 BYN</span>
+                                </div>
+                                
+                                <div class="details-toggle" id="payment-details-toggle-btn">
+                                    <span id="payment-details-text">Подробнее</span>
+                                </div>
+                            </div>
+                            <div class="payment-details-content" id="payment-details-content">
+                                <div class="payment-detail-row">
+                                    <span>Тип оплаты</span>
+                                    <span id="payment-details-method"></span>
+                                </div>
+                                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 5px 0;">
+                                <div class="payment-detail-row">
+                                    <span>Сумма</span>
+                                    <span id="payment-details-total">0.00 BYN</span>
+                                </div>
+                                <div class="payment-detail-row">
+                                    <span>Скидка</span>
+                                    <span id="payment-details-discount">0.00 BYN</span>
+                                </div>
+                                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 5px 0;">
+                                <div class="payment-detail-row" style="font-weight: bold;">
+                                    <span>Итого</span>
+                                    <span id="payment-details-final">0.00 BYN</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="issue-btn" class="primary-btn">Выдать товары</button>
+                        <button id="remove-from-fit-btn" class="secondary-btn red-outline-btn">Снять с примерки</button>
+                    </div>
+                </div>
+
+                <div id="order-products-right-panel">
+                    <div class="search-box-row">
+                        <div class="input-with-btn">
+                            <input type="text" id="issue-item-search" placeholder="ШК для снятия (9 цифр)" maxlength="9" inputmode="numeric">
+                            <button id="issue-item-search-btn" class="secondary-btn"><i class="fas fa-undo"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-cards-header">
+                        <div class="checkbox-wrapper-purple">
+                           <input type="checkbox" id="toggle-select-all-checkbox">
+                           <label for="toggle-select-all-checkbox" style="margin-left: 5px;">Выбрать все</label>
+                        </div>
+                    </div>
+                    <div class="product-cards-grid" id="product-cards"></div>
+                </div>
+            </div>
+
+            <div class="success-screen" id="success-screen" style="display: none;">
+                <h2 id="success-screen-title">Выдача завершена</h2>
+
+                <div class="success-summary-box">
+                    <div class="summary-item">
+                        <span class="summary-label">Клиент</span>
+                        <span class="summary-value" id="ss-client-name"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Ячейка</span>
+                        <span class="summary-value" id="ss-cell-number"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Выдано</span>
+                        <span class="summary-value" id="ss-issued-count"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Отмена</span>
+                        <span class="summary-value" id="ss-returned-count"></span>
+                    </div>
+                </div>
+
+                <div class="info-box-blue" id="success-screen-info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Не торопитесь сразу после ухода клиента сканировать товары в возвратную коробку. Если клиент передумает и захочет забрать эти товары перейдите во вкладку "Выдача" затем "Выдача из отмены" и следуйте инструкциям на экране.</p>
+                </div>
+                
+                <div id="ss-rating-block" style="display: none;">
+                    <hr class="menu-divider" style="margin: 15px 0;">
+                    <h2>Оцените курьера</h2>
+                    <div class="feedback-stars" id="ss-courier-stars-container">
+                        <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                    </div>
+                     <textarea id="ss-courier-feedback-text" placeholder="Комментарий" style="width: 100%; min-height: 60px; margin-top: 10px; resize: vertical; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);"></textarea>
+                    <div class="modal-buttons-container" style="margin-top: 20px;">
+                        <button id="ss-skip-rating-btn" class="secondary-btn">Пропустить</button>
+                        <button id="ss-submit-rating-btn" class="primary-btn">Готово</button>
+                    </div>
+                </div>
+                <button id="next-client-btn" class="primary-btn" style="margin-top: 20px;"><span>Следующий клиент</span></button>
+            </div>
+
+            <div class="mobile-issue-ui">
+                
+                <div id="m-issue-home">
+                    <div class="m-issue-header">
+                        <h1>Выдать</h1>
+                        <div class="m-issue-subtitle">На примерке: <span id="m-active-orders-count">0</span></div>
+                    </div>
+                    
+                    <div id="m-active-orders-list" class="m-active-orders-list">
+                        </div>
+
+                    <div class="m-home-bottom-actions">
+                        <button id="m-manual-search-btn" class="m-icon-btn-purple">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <button id="m-scan-qr-btn" class="primary-btn m-scan-main-btn">
+                            <i class="fas fa-qrcode"></i> Сканировать QR
+                        </button>
+                    </div>
+                </div>
+
+                <div id="m-issue-manual-input" style="display: none;">
+                    <div id="m-manual-step-phone">
+                        <div class="m-header-nav">
+                            <button class="m-back-btn" id="m-manual-back-home"><i class="fas fa-arrow-left"></i></button>
+                            <span class="m-header-title">Введите номер телефона</span>
+                            <div style="width: 24px;"></div>
+                        </div>
+                        <div class="m-input-center-box">
+                             <input type="tel" id="m-phone-input-field" class="m-big-input" placeholder="4 цифры" maxlength="4">
+                             <button id="m-phone-next-btn" class="primary-btn full-width-btn" style="margin-top: 20px;">Далее</button>
+                        </div>
+                    </div>
+
+                    <div id="m-manual-step-code" style="display: none;">
+                         <div class="m-header-nav">
+                            <button class="m-back-btn" id="m-manual-back-phone"><i class="fas fa-arrow-left"></i></button>
+                            <span class="m-header-title" id="m-display-phone-header">...</span>
+                            <div style="width: 24px;"></div>
+                        </div>
+                        <div class="m-input-center-box">
+                             <p style="margin-bottom: 20px; color: var(--text-secondary-color);">Введите код выдачи</p>
+                             <div class="m-code-inputs-container">
+                                 <input type="tel" class="m-digit-input" maxlength="1">
+                                 <input type="tel" class="m-digit-input" maxlength="1">
+                                 <input type="tel" class="m-digit-input" maxlength="1">
+                                 <input type="tel" class="m-digit-input" maxlength="1">
+                                 <input type="tel" class="m-digit-input" maxlength="1">
+                             </div>
+                             <button id="m-code-search-btn" class="primary-btn full-width-btn" style="margin-top: 30px;">Поиск</button>
+                        </div>
+                    </div>
+                    
+                    <div id="m-search-loader" style="display: none; position: absolute; top:0; left:0; width:100%; height:100%; background:white; z-index: 10; flex-direction: column; justify-content: center; align-items: center;">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 20px;">Поиск заказа...</p>
+                    </div>
+                </div>
+
+                <div id="m-camera-overlay" style="display: none;">
+                    <button class="m-cam-close-btn" id="m-cam-close-btn">&times;</button>
+                    <div class="m-cam-view">
+                         <video id="m-camera-video" autoplay playsinline muted></video>
+                         <div class="m-cam-frame"></div>
+                         <div class="m-cam-text" id="m-cam-status-text">Наведите на QR код</div>
+                         <button id="m-cam-simulate-btn" class="secondary-btn" style="position: absolute; bottom: 20px;">Симуляция скана</button>
+                    </div>
+                </div>
+
+                <div id="m-issue-main-view" style="display: none;">
+                    <div class="m-issue-view-top-block">
+                         <div class="m-iv-top-row">
+                             <div class="m-iv-cell" id="m-iv-cell">---</div>
+                             <div class="m-iv-count"><span id="m-iv-count">0</span> шт</div>
+                             <button class="m-iv-speaker" id="m-iv-speaker-btn"><i class="fas fa-volume-up"></i></button>
+                         </div>
+                         <div class="m-iv-phone" id="m-iv-phone">...</div>
+                    </div>
+
+                    <div class="m-issue-view-action-block">
+                        <div class="m-iv-action-header" id="m-verify-trigger-btn">
+                            <i class="fas fa-search"></i>
+                            <span>Проверить товары</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="m-issue-verify-screen" style="display: none;">
+                    <div class="m-camera-verify-wrapper">
+                        <div class="m-verify-top-bar">
+                             <button id="m-verify-back-btn" style="background:none; border:none; color:white; font-size: 1.5rem;"><i class="fas fa-arrow-left"></i></button>
+                             <span style="color: white; font-weight: bold; font-size: 1.1rem;">Проверить товары</span>
+                             <div style="width: 24px;"></div>
+                        </div>
+                        
+                        <video id="m-verify-video" autoplay playsinline muted></video>
+                        <div class="m-verify-frame"></div>
+                        
+                        <div class="m-verify-info-overlay">
+                             <div style="margin-bottom: 5px; color: #ccc;">Ячейки: <span id="m-verify-cells" style="color:white; font-weight:bold;">---</span></div>
+                             <div class="m-verify-remain-row">
+                                 <span>Осталось отсканировать</span>
+                                 <span class="m-verify-remain-count" id="m-verify-remain-count">0 шт</span>
+                             </div>
+                             
+                             <button id="m-verify-show-list-btn" class="m-verify-list-trigger">
+                                 <i class="fas fa-box-open"></i>
+                                 <span>Смотреть товары</span>
+                             </button>
+
+                             <button id="m-verify-sim-scan" class="secondary-btn" style="margin-top: 10px; width: 100%; opacity: 0.8;">Симуляция скана (9 цифр)</button>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="fullscreen-modal" id="m-verify-list-modal">
+                    <div class="modal-content" style="text-align: left; padding: 20px; height: 80vh; display: flex; flex-direction: column;">
+                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                             <h3>Осталось найти</h3>
+                             <button class="close-modal-btn" style="position: static;">&times;</button>
+                         </div>
+                         <div id="m-verify-list-container" style="overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 10px;">
+                             </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="mobile-bottom-nav">
+        <div class="mb-nav-item active" id="mb-nav-issue">
+            <i class="fas fa-truck"></i>
+            <span>Выдать</span>
+        </div>
+        <div class="mb-nav-item" id="mb-nav-reception" onclick="location.href='p.html'">
+            <i class="fas fa-dolly"></i>
+            <span>Принять</span>
+        </div>
+        <div class="mb-nav-item" id="mb-nav-returns" onclick="location.href='returns.html'">
+            <i class="fas fa-undo"></i>
+            <span>Вернуть</span>
+        </div>
+        <div class="mb-nav-item" id="mobile-more-btn">
+            <i class="fas fa-ellipsis-h"></i>
+            <span>Еще</span>
+        </div>
+    </div>
+
+    <div class="help-menu side-panel" id="help-menu"></div>
+    <div class="fullscreen-modal" id="search-modal"></div>
+    <div class="fullscreen-modal" id="qr-code-modal"></div>
+    <div class="fullscreen-modal" id="scanner-setup-modal"></div>
+    <div class="fullscreen-modal" id="account-modal"></div>
+    <div class="fullscreen-modal" id="help-content-modal"></div>
+    
+    <div class="fullscreen-modal" id="product-details-modal">
+        <div class="modal-content product-details-content">
+            <button class="close-modal-btn">&times;</button>
+            <div id="pd-modal-content"></div>
+        </div>
+    </div>
+
+    <div class="fullscreen-modal" id="courier-code-modal">
+        <div class="modal-content">
+            <h2 id="courier-modal-title">Сообщите код курьеру</h2>
+            <div id="courier-modal-body">
+                <div class="courier-code-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                    <p class="courier-code-display">123456</p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <button id="courier-audio-toggle-btn" class="secondary-btn full-width-btn">
+                        <i class="fas fa-play"></i> Озвучить
+                    </button>
+                </div>
+                
+                <div class="courier-modal-buttons" style="display: flex; gap: 10px; justify-content: space-between;">
+                    <button id="courier-back-btn" class="secondary-btn" style="flex: 1;">Назад</button>
+                    <button id="courier-continue-btn" class="primary-btn" style="flex: 1;">Продолжить</button>
+                </div>
+            </div>
+            
+            <div id="courier-modal-loader" style="display: none; padding: 20px 0; justify-content: center; align-items: center; flex-direction: column; gap: 15px;">
+                <div class="spinner"></div>
+                <p>Обработка данных...</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="fullscreen-modal" id="packages-modal">
+        <div class="modal-content package-modal-content">
+            <div class="panel-header" style="border-bottom: none; padding: 0 0 15px 0; display:flex; justify-content:space-between;">
+                <h3 style="font-size: 1.5rem;">Добавить пакет</h3>
+                <button class="close-modal-btn" style="position:static;">&times;</button>
+            </div>
+            <div class="panel-content" id="package-modal-body" style="padding: 0;"></div>
+            <div class="panel-footer" style="border-top: none; padding: 15px 0 0 0;">
+                <button id="close-package-modal-btn" class="primary-btn full-width-btn">Готово</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="fullscreen-modal" id="payment-fail-modal">
+        <div class="modal-content payment-fail-content">
+            <div class="payment-fail-header"><img src="alarm.svg" alt="Alarm" class="payment-fail-icon"></div>
+            <h2>Платеж не прошел</h2>
+            <p id="payment-fail-reason" style="margin: 10px 0 20px 0;">Причина ошибки</p>
+            <div class="modal-buttons-container" style="padding: 0 25px 25px 25px; width: 100%; box-sizing: border-box;">
+                <button id="pf-modal-back-btn" class="secondary-btn" style="width: 100%;">Назад</button>
+                <button id="pf-modal-retry-btn" class="primary-btn" style="width: 100%;">Повторить</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fullscreen-modal" id="courier-lost-alert-modal">
+        <div class="modal-content">
+            <div style="font-size: 3rem; color: var(--warning); margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i></div>
+            <h2>Внимание!</h2>
+            <p id="courier-lost-msg">В заказе курьера утеряны товары.</p>
+            <p style="font-size: 0.9rem; color: var(--text-secondary-color);">Если вы обнаружите утерянный товар, нажмите на текст "Просканировать утерянные" на экране выдачи и выполните проверку.</p>
+            <button id="courier-lost-ok-btn" class="primary-btn full-width-btn" style="margin-top: 20px;">Хорошо</button>
+        </div>
+    </div>
+    
+    <audio id="success-sound" src="successScan.mp3" preload="auto"></audio>
+    <audio id="scanner-sound" src="pressed-scanner.mp3" preload="auto"></audio>
+    <audio id="error-sound" src="failScan.mp3" preload="auto"></audio>
+    <audio id="otkaz-sound" src="otkaz.mp3" preload="auto"></audio>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="p_shared.js"></script>
+    <script src="speaker.js"></script>
+    <script src="websocket-client.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
