@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Повторная приёмка | WB PVZ</title>
+    <link rel="icon" href="logotype.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="data-loader" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="logotype.png" alt="WB" class="wb-icon">
+                <div class="sidebar-version"><br></div>
+            </div>
+            <div class="sidebar-menu">
+                 <div class="menu-item" onclick="location.href='p.html'">
+                    <img src="accept.svg" alt="Товары" class="menu-icon">
+                    <span>Товары</span>
+                </div>
+                <div class="menu-item" onclick="location.href='p2.html'">
+                    <img src="delivered.svg" alt="Смена ячейки" class="menu-icon">
+                    <span>Смена ячейки</span>
+                </div>
+                <div class="menu-item active" onclick="location.href='p3.html'">
+                    <img src="recycle.svg" alt="Повторная приемка" class="menu-icon">
+                    <span>Повторная приемка</span>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <header>
+                <div class="header-left-controls">
+                    <div class="toolbar-btn" id="burger-menu" title="Меню"><i class="fas fa-bars"></i></div>
+                    <div class="toolbar-btn" id="show-qr-btn" title="QR-код ПВЗ"><i class="fas fa-qrcode"></i></div>
+                    <div class="toolbar-btn" id="search-by-code-btn" title="Найти товар по коду"><i class="fas fa-search"></i></div>
+                </div>
+                <nav class="main-nav">
+                    <div class="nav-center">
+                        <button class="nav-btn" onclick="location.href='index.html'">
+                            <div class="nav-icon-wrapper">
+                                <img src="delivery.svg" alt="Выдача" class="nav-icon">
+                                <div class="nav-badge" id="order-count-badge" style="display: none;">0</div>
+                            </div>
+                            <span class="nav-text">Выдача</span>
+                        </button>
+                        <button class="nav-btn active">
+                            <div class="nav-icon-wrapper">
+                                <img src="accept.svg" alt="Приёмка" class="nav-icon">
+                            </div>
+                            <span class="nav-text">Приёмка</span>
+                        </button>
+                        <button class="nav-btn" onclick="location.href='returns.html'">
+                            <div class="nav-icon-wrapper">
+                                <img src="returns.svg" alt="Возврат" class="nav-icon">
+                                <div class="nav-badge" id="returns-nav-badge" style="display: none;">0</div>
+                            </div>
+                            <span class="nav-text">Возврат</span>
+                        </button>
+                    </div>
+                </nav>
+                 <div class="header-right-controls">
+                    <div id="connection-status" title="Статус сканера"><i class="fas fa-barcode"></i></div>
+                </div>
+            </header>
+
+            <div class="search-box">
+                <input type="text" id="product-code-repeat" placeholder="Введите 9 цифр кода для повторной приемки" maxlength="9" inputmode="numeric">
+                <button id="reception-repeat-btn" class="primary-btn">
+                    <i class="fas fa-redo"></i> <span>Принять заново</span>
+                </button>
+            </div>
+            <div id="reception-repeat-history-container" class="reception-history-row" style="margin-top: 40px;"></div>
+        </div>
+    </div>
+
+    <div class="help-menu side-panel" id="help-menu"></div>
+    <div class="fullscreen-modal" id="search-modal"></div>
+    <div class="fullscreen-modal" id="qr-code-modal"></div>
+    <div class="fullscreen-modal" id="main-settings-modal"></div>
+    <div class="fullscreen-modal" id="voice-settings-modal"></div>
+    <div class="fullscreen-modal" id="scanner-setup-modal"></div>
+    <div class="fullscreen-modal" id="account-modal"></div>
+    <div class="fullscreen-modal" id="help-content-modal"></div>
+
+    <audio id="scanner-sound" src="pressed-scanner.mp3" preload="auto"></audio>
+    <audio id="error-sound" src="failScan.mp3" preload="auto"></audio>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="speaker.js"></script>
+    <script src="websocket-client.js"></script>
+    <script src="p3.js"></script>
+    <script src="p_shared.js"></script>
+</body>
+</html>

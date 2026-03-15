@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Приёмка | WB PVZ</title>
+    <link rel="icon" href="logotype.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="data-loader" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="logotype.png" alt="WB" class="wb-icon">
+                <div class="sidebar-version"><br></div>
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-item active" onclick="location.href='p.html'">
+                     <img src="accept.svg" alt="Товары" class="menu-icon">
+                    <span>Товары</span>
+                </div>
+                <div class="menu-item" onclick="location.href='p2.html'">
+                    <img src="delivered.svg" alt="Смена ячейки" class="menu-icon">
+                    <span>Смена ячейки</span>
+                </div>
+                <div class="menu-item" onclick="location.href='p3.html'">
+                    <img src="recycle.svg" alt="Повторная приемка" class="menu-icon">
+                    <span>Повторная приемка</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <header>
+                <div class="header-left-controls">
+                    <div class="toolbar-btn" id="burger-menu" title="Меню"><i class="fas fa-bars"></i></div>
+                    <div class="toolbar-btn" id="show-qr-btn" title="QR-код ПВЗ"><i class="fas fa-qrcode"></i></div>
+                    <div class="toolbar-btn" id="search-by-code-btn" title="Найти товар по коду"><i class="fas fa-search"></i></div>
+                </div>
+                <nav class="main-nav">
+                    <div class="nav-center">
+                        <button class="nav-btn" onclick="location.href='index.html'">
+                            <div class="nav-icon-wrapper">
+                                <img src="delivery.svg" alt="Выдача" class="nav-icon">
+                                <div class="nav-badge" id="order-count-badge" style="display: none;">0</div>
+                            </div>
+                            <span class="nav-text">Выдача</span>
+                        </button>
+                        <button class="nav-btn active">
+                            <div class="nav-icon-wrapper">
+                                <img src="accept.svg" alt="Приёмка" class="nav-icon">
+                            </div>
+                            <span class="nav-text">Приёмка</span>
+                        </button>
+                        <button class="nav-btn" onclick="location.href='returns.html'">
+                            <div class="nav-icon-wrapper">
+                                <img src="returns.svg" alt="Возврат" class="nav-icon">
+                                <div class="nav-badge" id="returns-nav-badge" style="display: none;">0</div>
+                            </div>
+                            <span class="nav-text">Возврат</span>
+                        </button>
+                    </div>
+                </nav>
+                <div class="header-right-controls">
+                    <div id="connection-status" title="Статус сканера"><i class="fas fa-barcode"></i></div>
+                </div>
+            </header>
+
+            <div class="reception-container">
+                <div class="search-box compact-search">
+                    <input type="text" id="product-code" placeholder="Отсканируйте ШК товара" maxlength="9" inputmode="numeric">
+                    <button id="reception-btn" class="primary-btn" title="Принять">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button id="simulate-qr-btn" class="secondary-btn" title="Случайный ШК">
+                        <i class="fas fa-qrcode"></i>
+                    </button>
+                </div>
+
+                <div class="reception-actions-center">
+                    <button id="accept-no-barcode-btn" class="secondary-btn">Принять без ШК</button>
+                    <button id="accept-defective-btn" class="secondary-btn">Принять с браком</button>
+                </div>
+
+                <div id="reception-history-grid" class="reception-grid"></div>
+            </div>
+
+            <div class="mobile-reception-ui">
+                <div class="m-scan-state" id="m-scan-screen">
+                    <i class="fas fa-qrcode m-qr-icon-large"></i>
+                    <div class="m-scan-title">Отсканируйте товар или QR код у курьера</div>
+                    <div class="m-scan-subtitle">Если у товара отсутствует код, нажмите на три точки и далее на проблемы с QR</div>
+                    
+                    <div class="m-scan-actions">
+                        <div class="m-dots-btn" id="mobile-dots-btn"><i class="fas fa-ellipsis-v"></i></div>
+                        <button class="m-scan-btn" id="mobile-start-scan-btn">Сканировать</button>
+                    </div>
+                </div>
+
+                <div class="m-result-state" id="m-result-screen">
+                    <div class="m-res-header">
+                        <div class="m-cell-number" id="m-res-cell">---</div>
+                        <div class="m-sound-btn" id="m-res-sound-btn"><i class="fas fa-volume-up"></i></div>
+                    </div>
+                    <div class="m-status-text">Принят</div>
+                    
+                    <div class="m-card">
+                        <img src="" alt="Товар" class="m-card-img" id="m-res-img">
+                        <div class="m-card-info">
+                            <div class="m-code" id="m-res-code"></div>
+                            <div class="m-brand" id="m-res-brand">BRAND</div>
+                            <div class="m-name" id="m-res-name">Название товара</div>
+                            <div class="m-price" id="m-res-price">0 ₽</div>
+                        </div>
+                    </div>
+
+                    <div class="m-defective-block">
+                        <div class="checkbox-wrapper-purple">
+                            <input type="checkbox" id="m-res-defective-check">
+                        </div>
+                        <label for="m-res-defective-check">Брак</label>
+                    </div>
+
+                    <div class="m-scan-actions" style="position:static; margin-top:auto;">
+                        <button class="m-scan-btn" id="m-res-next-btn">Сканировать следующий</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-bottom-nav">
+        <div class="mb-nav-item active">
+            <i class="fas fa-dolly"></i>
+            <span>Принять</span>
+        </div>
+        <div class="mb-nav-item" onclick="location.href='index.html'">
+            <i class="fas fa-truck"></i>
+            <span>Выдать</span>
+        </div>
+        <div class="mb-nav-item" onclick="location.href='returns.html'">
+            <i class="fas fa-undo"></i>
+            <span>Вернуть</span>
+        </div>
+        <div class="mb-nav-item" id="mobile-more-btn">
+            <i class="fas fa-ellipsis-h"></i>
+            <span>Еще</span>
+        </div>
+    </div>
+    
+    <div class="mobile-more-menu" id="mobile-more-menu-content">
+        <div class="mm-item" onclick="location.href='p2.html'">Смена ячейки</div>
+        <div class="mm-item" onclick="location.href='p3.html'">Повторная приемка</div>
+        <div class="mm-item" id="mobile-problems-qr-btn">Проблемы с QR</div>
+        <div class="mm-item" id="mobile-exit-btn">Выйти</div>
+    </div>
+
+    <div id="mobile-camera-overlay">
+        <div class="cam-close" id="close-cam-btn">&times;</div>
+        <div class="cam-view">
+            <div class="cam-frame"></div>
+            <div class="cam-text">Наведите камеру на QR-код</div>
+        </div>
+    </div>
+
+    <div class="help-menu side-panel" id="help-menu"></div>
+    <div class="fullscreen-modal" id="search-modal"></div>
+    <div class="fullscreen-modal" id="qr-code-modal"></div>
+    <div class="fullscreen-modal" id="main-settings-modal"></div>
+    <div class="fullscreen-modal" id="voice-settings-modal"></div>
+    <div class="fullscreen-modal" id="scanner-setup-modal"></div>
+    <div class="fullscreen-modal" id="account-modal"></div>
+    <div class="fullscreen-modal" id="help-content-modal"></div>
+
+    <div class="fullscreen-modal" id="reason-modal">
+        <div class="modal-content">
+            <button class="close-modal-btn">&times;</button>
+            <h2 id="reason-modal-title">Выберите причину</h2>
+            <div id="reason-buttons-container" class="modal-buttons-container" style="display:none;"></div>
+            <div id="reason-radio-container" class="radio-group-container" style="display:none; text-align: left; margin: 20px 0;"></div>
+            <button id="reason-confirm-btn" class="primary-btn full-width-btn" style="display:none; margin-top: 15px;">Подтвердить</button>
+        </div>
+    </div>
+
+    <div class="fullscreen-modal" id="input-modal">
+        <div class="modal-content">
+             <button class="close-modal-btn">&times;</button>
+             <h2 id="input-modal-title"></h2>
+             <p id="input-modal-prompt"></p>
+             <div class="input-group" id="modal-input-group">
+                <input type="text" id="modal-input-field" placeholder="Введите цифры..." maxlength="9" inputmode="numeric">
+             </div>
+             <div id="modal-product-display" style="display: none; margin: 15px 0;"></div>
+             <div id="modal-action-buttons" style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                 <button id="modal-submit-btn" class="primary-btn full-width-btn">Далее</button>
+                 <button id="modal-cancel-btn" class="secondary-btn full-width-btn" style="display: none;">Нет</button>
+             </div>
+             <div id="modal-link-action" style="margin-top: 15px; display: none;">
+                 <span class="text-link-danger">Бар-код отсутствует</span>
+             </div>
+        </div>
+    </div>
+
+    <audio id="scanner-sound" src="pressed-scanner.mp3" preload="auto"></audio>
+    <audio id="error-sound" src="failScan.mp3" preload="auto"></audio>
+    <audio id="already-accepted-sound" src="good_already_accepted.mp3" preload="auto"></audio>
+    <audio id="decline-sound" src="decline.mp3" preload="auto"></audio>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="speaker.js"></script>
+    <script src="websocket-client.js"></script>
+    <script src="p.js"></script>
+    <script src="p_shared.js"></script>
+</body>
+</html>

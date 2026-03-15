@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logotype.png" type="image/png">
+    <title>Регистрация | WB PVZ</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .step { display: none; width: 100%; animation: fadeIn 0.5s ease-in-out; }
+        .step.active { display: block; }
+        .auth-info-box { text-align: left; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 15px; margin: 10px 0; font-size: 0.95rem; }
+        .auth-info-box p { margin-bottom: 8px; }
+        .auth-info-box p:last-child { margin-bottom: 0; }
+        .auth-info-box strong { color: var(--text-secondary-color); min-width: 140px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <img src="logotype.png" alt="Logo" class="screen-logo-top-left">
+    
+    <div class="auth-container">
+        <div class="auth-form">
+            
+            <div id="step1" class="step active">
+                <h1 class="auth-title">Шаг 1: Данные для входа</h1>
+                <div id="error-message-step1" class="auth-error"></div>
+                
+                <div class="input-group">
+                    <label>Номер телефона (ваш логин)</label>
+                    <div class="custom-phone-group" id="reg-phone-wrapper">
+                        <div class="custom-country-selector">
+                            <div class="selected-country">
+                                <img class="flag-img" src="ru.svg" alt="flag">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <ul class="country-dropdown-list">
+                                <li data-code="7" data-prefix="+7" data-length="10" data-img="ru.svg"><img src="ru.svg" alt="ru"> <span>Россия (+7)</span></li>
+                                <li data-code="375" data-prefix="+375" data-length="9" data-img="by.svg"><img src="by.svg" alt="by"> <span>Беларусь (+375)</span></li>
+                                <li data-code="7" data-prefix="+7" data-length="10" data-img="kz.svg"><img src="kz.svg" alt="kz"> <span>Казахстан (+7)</span></li>
+                                <li data-code="374" data-prefix="+374" data-length="8" data-img="ar.svg"><img src="ar.svg" alt="ar"> <span>Армения (+374)</span></li>
+                                <li data-code="996" data-prefix="+996" data-length="9" data-img="kg.svg"><img src="kg.svg" alt="kg"> <span>Кыргызстан (+996)</span></li>
+                                <li data-code="998" data-prefix="+998" data-length="9" data-img="uz.svg"><img src="uz.svg" alt="uz"> <span>Узбекистан (+998)</span></li>
+                                <li data-code="995" data-prefix="+995" data-length="9" data-img="ge.svg"><img src="ge.svg" alt="ge"> <span>Грузия (+995)</span></li>
+                                <li data-code="992" data-prefix="+992" data-length="9" data-img="tj.svg"><img src="tj.svg" alt="tj"> <span>Таджикистан (+992)</span></li>
+                                <li data-code="993" data-prefix="+993" data-length="8" data-img="tm.svg"><img src="tm.svg" alt="tm"> <span>Туркменистан (+993)</span></li>
+                                <li data-code="994" data-prefix="+994" data-length="9" data-img="az.svg"><img src="az.svg" alt="az"> <span>Азербайджан (+994)</span></li>
+                                <li data-code="90" data-prefix="+90" data-length="10" data-img="tr.svg"><img src="tr.svg" alt="tr"> <span>Турция (+90)</span></li>
+                                <li data-code="972" data-prefix="+972" data-length="9" data-img="iz.svg"><img src="iz.svg" alt="iz"> <span>Израиль (+972)</span></li>
+                                <li data-code="380" data-prefix="+380" data-length="9" data-img="ua.svg"><img src="ua.svg" alt="ua"> <span>Украина (+380)</span></li>
+                                <li data-code="44" data-prefix="+44" data-length="10" data-img="uk.svg"><img src="uk.svg" alt="uk"> <span>Великобритания (+44)</span></li>
+                            </ul>
+                        </div>
+                        <div class="phone-input-wrapper">
+                            <span class="phone-prefix">+7</span>
+                            <input type="tel" class="phone-input" id="reg-phone" required inputmode="numeric" placeholder="Номер телефона">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group password-group">
+                    <label>Желаемый пароль (мин. 8 символов)</label>
+                    <input type="password" id="reg-password" required placeholder="Пароль">
+                    <span class="password-toggle"><i class="fas fa-eye"></i></span>
+                </div>
+
+                <button id="next-btn-step1" class="primary-btn rounded-btn full-width-btn" style="margin-top: 15px;">Далее</button>
+                <div class="auth-links-list">
+                    <a href="login.html" class="auth-text-link">Уже есть аккаунт? Войти</a>
+                </div>
+            </div>
+
+            <div id="step2" class="step">
+                <h1 class="auth-title">Шаг 2: Информация о ПВЗ</h1>
+                <div id="error-message-step2" class="auth-error"></div>
+                
+                <div class="input-group">
+                    <label>Адрес</label>
+                    <input type="text" id="reg-address" required placeholder="г. Москва, ул. Примерная, д. 10">
+                </div>
+
+                <div class="input-group" style="display:flex; gap:15px;">
+                    <div style="flex:1;">
+                        <label>Примерочные</label>
+                        <input type="number" id="reg-fitting-rooms" required placeholder="3" min="0">
+                    </div>
+                    <div style="flex:2;">
+                        <label>Время работы</label>
+                        <input type="text" id="reg-work-hours" required placeholder="10:00 - 21:00">
+                    </div>
+                </div>
+                
+                <button id="next-btn-step2" class="primary-btn rounded-btn full-width-btn" style="margin-top: 10px;">Далее</button>
+            </div>
+
+            <div id="step3" class="step">
+                <h1 class="auth-title" style="font-size: 1.3rem;">Шаг 3: Информация о собственнике</h1>
+                <div id="error-message-step3" class="auth-error"></div>
+                
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <input type="text" id="owner-last-name" required placeholder="Фамилия">
+                </div>
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <input type="text" id="owner-first-name" required placeholder="Имя">
+                </div>
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <input type="text" id="owner-patronymic" placeholder="Отчество">
+                </div>
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <label style="font-size: 0.85rem;">Дата рождения</label>
+                    <input type="date" id="owner-dob" required>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <label style="font-size: 0.85rem;">Телефон (для связи)</label>
+                    <div class="custom-phone-group" id="owner-phone-wrapper">
+                        <div class="custom-country-selector">
+                            <div class="selected-country">
+                                <img class="flag-img" src="ru.svg" alt="flag">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <ul class="country-dropdown-list">
+                                <li data-code="7" data-prefix="+7" data-length="10" data-img="ru.svg"><img src="ru.svg" alt="ru"> <span>Россия (+7)</span></li>
+                                <li data-code="375" data-prefix="+375" data-length="9" data-img="by.svg"><img src="by.svg" alt="by"> <span>Беларусь (+375)</span></li>
+                                <li data-code="7" data-prefix="+7" data-length="10" data-img="kz.svg"><img src="kz.svg" alt="kz"> <span>Казахстан (+7)</span></li>
+                                <li data-code="374" data-prefix="+374" data-length="8" data-img="ar.svg"><img src="ar.svg" alt="ar"> <span>Армения (+374)</span></li>
+                                <li data-code="996" data-prefix="+996" data-length="9" data-img="kg.svg"><img src="kg.svg" alt="kg"> <span>Кыргызстан (+996)</span></li>
+                                <li data-code="998" data-prefix="+998" data-length="9" data-img="uz.svg"><img src="uz.svg" alt="uz"> <span>Узбекистан (+998)</span></li>
+                                <li data-code="995" data-prefix="+995" data-length="9" data-img="ge.svg"><img src="ge.svg" alt="ge"> <span>Грузия (+995)</span></li>
+                                <li data-code="992" data-prefix="+992" data-length="9" data-img="tj.svg"><img src="tj.svg" alt="tj"> <span>Таджикистан (+992)</span></li>
+                                <li data-code="993" data-prefix="+993" data-length="8" data-img="tm.svg"><img src="tm.svg" alt="tm"> <span>Туркменистан (+993)</span></li>
+                                <li data-code="994" data-prefix="+994" data-length="9" data-img="az.svg"><img src="az.svg" alt="az"> <span>Азербайджан (+994)</span></li>
+                                <li data-code="90" data-prefix="+90" data-length="10" data-img="tr.svg"><img src="tr.svg" alt="tr"> <span>Турция (+90)</span></li>
+                                <li data-code="972" data-prefix="+972" data-length="9" data-img="iz.svg"><img src="iz.svg" alt="iz"> <span>Израиль (+972)</span></li>
+                                <li data-code="380" data-prefix="+380" data-length="9" data-img="ua.svg"><img src="ua.svg" alt="ua"> <span>Украина (+380)</span></li>
+                                <li data-code="44" data-prefix="+44" data-length="10" data-img="uk.svg"><img src="uk.svg" alt="uk"> <span>Великобритания (+44)</span></li>
+                            </ul>
+                        </div>
+                        <div class="phone-input-wrapper">
+                            <span class="phone-prefix">+7</span>
+                            <input type="tel" class="phone-input" id="owner-phone" required inputmode="numeric" placeholder="Номер телефона">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label style="font-size: 0.85rem;">Email (для восстановления пароля)</label>
+                    <input type="email" id="owner-email" required placeholder="example@mail.ru">
+                </div>
+
+                <button id="register-btn" class="primary-btn rounded-btn full-width-btn" style="margin-top: 10px;">Подтвердить</button>
+            </div>
+
+            <div id="step-loading" class="step">
+                <h1>Регистрация...</h1>
+                <p>Создаем ваш аккаунт и добавляем ПВЗ на карту. Это займет несколько секунд.</p>
+                <div class="spinner" style="margin: 30px auto;"></div>
+            </div>
+
+            <div id="step-success" class="step">
+                <h2 style="color: var(--success);">Вы зарегистрированы!</h2>
+                <p>Ваш ПВЗ добавлен на карту.</p>
+                
+                <div class="auth-info-box">
+                    <p><strong>Логин:</strong> <span id="new-login-id"></span></p>
+                    <p><strong>Пароль:</strong> <span id="new-login-password"></span></p>
+                    <p><strong>ID ПВЗ:</strong> <span id="new-pvz-id"></span></p>
+                </div>
+
+                <a href="login.html" class="primary-btn rounded-btn full-width-btn" style="margin-top: 20px; text-decoration: none;">Перейти ко входу</a>
+            </div>
+
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="p_shared.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Сканер WB PVZ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root { --primary: #8A2BE2; --accent: #9C27B0; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .scanner-container { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; padding: 20px; position: relative; }
+        .scanner-header { text-align: center; margin-bottom: 20px; }
+        h1 { color: var(--primary); margin: 0; }
+        .scanner-status { padding: 10px; border-radius: 5px; background: #f0f0f0; margin-bottom: 20px; text-align: center; font-weight: bold; }
+        .scanner-status.connected { background: #e8f5e9; color: #2e7d32; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 5px; background: var(--primary); color: white; font-size: 16px; cursor: pointer; margin-bottom: 10px; display: inline-flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-scan { background: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="scanner-container">
+        <div class="scanner-header">
+            <h1><i class="fas fa-barcode"></i> Сканер WB PVZ</h1>
+        </div>
+        <div id="scanner-status" class="scanner-status">
+            <i class="fas fa-circle"></i> Не подключено
+        </div>
+        <div class="form-group">
+            <label for="server-ip">IP-адрес Сервера:</label>
+            <input type="text" id="server-ip" placeholder="например, 192.168.1.14">
+        </div>
+        <div class="form-group">
+            <label for="pvz-code">Код ПВЗ (ID сотрудника):</label>
+            <input type="text" id="pvz-code" maxlength="8" placeholder="12345678" inputmode="numeric">
+        </div>
+        <button id="connect-btn" class="btn">
+            <i class="fas fa-link"></i> Подключиться
+        </button>
+        <button id="scan-btn" class="btn btn-scan" disabled>
+            <i class="fas fa-barcode"></i> Сканировать
+        </button>
+    </div>
+    <script>
+        let wsConnection = null;
+        const deviceCode = Math.floor(10000000 + Math.random() * 90000000).toString();
+        let pvzCode = null;
+        let connected = false;
+
+        document.getElementById('connect-btn').addEventListener('click', connectToPVZ);
+        document.getElementById('scan-btn').addEventListener('click', sendScan);
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'AudioVolumeUp' || e.key === 'AudioVolumeDown') {
+                e.preventDefault();
+                sendScan();
+            }
+        });
+
+        function connectToPVZ() {
+            const pvzCodeInput = document.getElementById('pvz-code');
+            const ipInput = document.getElementById('server-ip');
+            
+            pvzCode = pvzCodeInput.value.trim();
+            const serverIP = ipInput.value.trim();
+
+            if (!serverIP) {
+                alert('Введите IP-адрес сервера'); return;
+            }
+            if (!/^\d{8}$/.test(pvzCode)) {
+                alert('Введите корректный 8-значный ID сотрудника'); return;
+            }
+
+            const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+            wsConnection = new WebSocket(`${protocol}://${serverIP}:8080`);
+            
+            wsConnection.onopen = () => {
+                wsConnection.send(JSON.stringify({ type: 'register_scanner', code: deviceCode, targetCode: pvzCode }));
+            };
+
+            wsConnection.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'scanner_registered') {
+                     connected = true;
+                    updateStatus(`Подключено к ПВЗ: ${pvzCode}`, true);
+                    document.getElementById('scan-btn').disabled = false;
+                    document.getElementById('connect-btn').disabled = true;
+                    ipInput.disabled = true;
+                    pvzCodeInput.disabled = true;
+                }
+            };
+            wsConnection.onclose = () => {
+                connected = false;
+                updateStatus('Отключено', false);
+                document.getElementById('scan-btn').disabled = true;
+                document.getElementById('connect-btn').disabled = false;
+                ipInput.disabled = false;
+                pvzCodeInput.disabled = false;
+            };
+            wsConnection.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateStatus('Ошибка подключения', false);
+            };
+        }
+
+        function sendScan() {
+            if (!connected || document.getElementById('scan-btn').disabled) return;
+            const randomCode = Math.floor(100000000 + Math.random() * 900000000).toString();
+            wsConnection.send(JSON.stringify({ type: 'scanner_send', targetCode: pvzCode, code: randomCode }));
+        }
+
+        function updateStatus(text, isConnected) {
+            const statusEl = document.getElementById('scanner-status');
+            statusEl.innerHTML = `<i class="fas fa-circle"></i> ${text}`;
+            statusEl.className = isConnected ? 'scanner-status connected' : 'scanner-status';
+        }
+    </script>
+</body>
+</html>

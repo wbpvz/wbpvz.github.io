@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" href="logotype.png" type="image/png">
+    <title>Вход | WB PVZ</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <img src="logotype.png" alt="WB Logo" class="screen-logo-top-left">
+
+    <div class="auth-container">
+        <div class="auth-form" id="main-auth-form">
+            <h1 class="auth-title">Вход по номеру телефона</h1>
+            <div id="error-message" class="auth-error"></div>
+
+            <div class="input-group">
+                <div class="custom-phone-group" id="login-phone-wrapper">
+                    <div class="custom-country-selector">
+                        <div class="selected-country">
+                            <img class="flag-img" src="ru.svg" alt="flag">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <ul class="country-dropdown-list">
+                            <li data-code="7" data-prefix="+7" data-length="10" data-img="ru.svg"><img src="ru.svg" alt="ru"> <span>Россия (+7)</span></li>
+                            <li data-code="375" data-prefix="+375" data-length="9" data-img="by.svg"><img src="by.svg" alt="by"> <span>Беларусь (+375)</span></li>
+                            <li data-code="7" data-prefix="+7" data-length="10" data-img="kz.svg"><img src="kz.svg" alt="kz"> <span>Казахстан (+7)</span></li>
+                            <li data-code="374" data-prefix="+374" data-length="8" data-img="ar.svg"><img src="ar.svg" alt="ar"> <span>Армения (+374)</span></li>
+                            <li data-code="996" data-prefix="+996" data-length="9" data-img="kg.svg"><img src="kg.svg" alt="kg"> <span>Кыргызстан (+996)</span></li>
+                            <li data-code="998" data-prefix="+998" data-length="9" data-img="uz.svg"><img src="uz.svg" alt="uz"> <span>Узбекистан (+998)</span></li>
+                            <li data-code="995" data-prefix="+995" data-length="9" data-img="ge.svg"><img src="ge.svg" alt="ge"> <span>Грузия (+995)</span></li>
+                            <li data-code="992" data-prefix="+992" data-length="9" data-img="tj.svg"><img src="tj.svg" alt="tj"> <span>Таджикистан (+992)</span></li>
+                            <li data-code="993" data-prefix="+993" data-length="8" data-img="tm.svg"><img src="tm.svg" alt="tm"> <span>Туркменистан (+993)</span></li>
+                            <li data-code="994" data-prefix="+994" data-length="9" data-img="az.svg"><img src="az.svg" alt="az"> <span>Азербайджан (+994)</span></li>
+                            <li data-code="90" data-prefix="+90" data-length="10" data-img="tr.svg"><img src="tr.svg" alt="tr"> <span>Турция (+90)</span></li>
+                            <li data-code="972" data-prefix="+972" data-length="9" data-img="iz.svg"><img src="iz.svg" alt="iz"> <span>Израиль (+972)</span></li>
+                            <li data-code="380" data-prefix="+380" data-length="9" data-img="ua.svg"><img src="ua.svg" alt="ua"> <span>Украина (+380)</span></li>
+                            <li data-code="44" data-prefix="+44" data-length="10" data-img="uk.svg"><img src="uk.svg" alt="uk"> <span>Великобритания (+44)</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="phone-input-wrapper">
+                        <span class="phone-prefix">+7</span>
+                        <input type="tel" class="phone-input" id="login-id" required inputmode="numeric" placeholder="Номер телефона">
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group password-group">
+                <input type="password" id="login-password" required placeholder="Пароль">
+                <span class="password-toggle"><i class="fas fa-eye"></i></span>
+            </div>
+
+            <div class="checkbox-wrapper-purple">
+                <input type="checkbox" id="remember-me">
+                <label for="remember-me">Запомнить меня</label>
+            </div>
+
+            <div class="auth-links-list">
+                <a href="register.html" class="auth-text-link">Регистрация</a>
+                <button id="forgot-password-link" class="auth-text-link">Забыли пароль?</button>
+            </div>
+
+            <button id="login-btn" class="primary-btn rounded-btn full-width-btn">Войти</button>
+        </div>
+
+        <div class="auth-form" id="pvz-selection-screen" style="display: none;">
+            <h2 style="margin-bottom: 20px;">Выберите пункт выдачи</h2>
+            <div class="info-box-blue">
+                <i class="fas fa-info-circle"></i>
+                <span>Будьте внимательны при выборе вашего ПВЗ</span>
+            </div>
+            <div id="pvz-list-container" class="pvz-list" style="margin-bottom: 20px; display:flex; flex-direction:column; gap:10px;"></div>
+            <button id="pvz-not-found-btn" class="text-link-danger" style="background: none; border: none; margin-top: 20px;">
+                Нет моего ПВЗ в списке
+            </button>
+        </div>
+
+        <div class="auth-form" id="manager-selection-screen" style="display: none;">
+            <h2 style="margin-bottom: 20px;">Выберите сотрудника</h2>
+            <div class="manager-list"></div>
+        </div>
+    </div>
+    
+    <div class="fullscreen-modal" id="recovery-modal">
+        <div class="modal-content">
+            <button class="close-modal-btn">&times;</button>
+            <h2>Восстановление доступа</h2>
+            
+            <div id="recovery-step1">
+                <p style="margin-bottom: 20px; color: var(--text-secondary-color);">Введите почту которая была указана при регистрации.</p>
+                <div id="recovery-error-message" class="auth-error" style="display: none;"></div>
+                <div class="input-group">
+                    <input type="email" id="recovery-email" required placeholder="Ваш Email">
+                </div>
+                <button id="check-recovery-email-btn" class="primary-btn rounded-btn full-width-btn">Проверить</button>
+            </div>
+
+            <div id="recovery-step2" style="display: none;">
+                <p style="font-size: 1.1rem; font-weight: bold; margin-bottom: 10px;">Возможно это ваш ПВЗ?</p>
+                <p id="recovery-pvz-address" style="margin-bottom: 25px; color: var(--primary); font-size: 1rem; padding: 10px; background: var(--gray-lightest); border-radius: 8px; border: 1px solid var(--border-color);"></p>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button id="recovery-confirm-no" class="secondary-btn rounded-btn full-width-btn">Нет</button>
+                    <button id="recovery-confirm-yes" class="primary-btn rounded-btn full-width-btn">Да</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    
+    <script src="p_shared.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>
