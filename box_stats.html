@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Статистка | WB PVZ</title>
+    <link rel="icon" href="logotype.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="logotype.png" alt="WB" class="wb-icon">
+                <div class="sidebar-version"> <br></div>
+            </div>
+        </div>
+        <div class="main-content">
+            <header>
+                <div class="header-left-controls">
+                    <div class="toolbar-btn" id="burger-menu" title="Меню"><i class="fas fa-bars"></i></div>
+                </div>
+                <nav class="main-nav">
+                    <div class="nav-center">
+                        <button class="nav-btn" onclick="location.href='index.html'">
+                            <div class="nav-icon-wrapper">
+                                <img src="delivery.svg" alt="Выдача" class="nav-icon">
+                                <div class="nav-badge" id="order-count-badge" style="display: none;">0</div>
+                            </div>
+                            <span class="nav-text">Выдача</span>
+                        </button>
+                        <button class="nav-btn" onclick="location.href='p.html'">
+                            <div class="nav-icon-wrapper">
+                                <img src="accept.svg" alt="Приёмка" class="nav-icon">
+                            </div>
+                            <span class="nav-text">Приёмка</span>
+                        </button>
+                        <button class="nav-btn" onclick="location.href='returns.html'">
+                            <div class="nav-icon-wrapper">
+                                <img src="returns.svg" alt="Возврат" class="nav-icon">
+                                <div class="nav-badge" id="returns-nav-badge" style="display: none;">0</div>
+                            </div>
+                            <span class="nav-text">Возврат</span>
+                        </button>
+                    </div>
+                </nav>
+                 <div class="header-right-controls">
+                    <div id="connection-status" title="Статус сканера"><i class="fas fa-barcode"></i></div>
+                </div>
+            </header>
+
+            <div class="page-header">
+                <h2>Статистика по коробкам</h2>
+            </div>
+            
+             <div class="filters">
+                <button id="open-filter-modal-btn" class="primary-btn"><i class="fas fa-filter"></i> Фильтры</button>
+                 <div id="active-filters-container"></div>
+            </div>
+
+            <div id="stats-container">
+                <!-- Delivery stats will be rendered here by JS -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="help-menu" id="help-menu"></div>
+    <div class="fullscreen-modal" id="help-content-modal"></div>
+     
+     <div class="fullscreen-modal" id="filter-modal">
+        <div class="modal-content">
+            <button class="close-modal-btn">&times;</button>
+            <h2>Фильтры</h2>
+            <div class="modal-filter-options">
+                <button class="secondary-btn" data-period="all">Все</button>
+                <button class="secondary-btn" data-period="week">За неделю</button>
+                <button class="secondary-btn" data-period="month">За месяц</button>
+                <button class="secondary-btn" data-period="3month">За 3 месяца</button>
+                 <hr>
+                 <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 10px;">
+                    <button id="clear-filters-btn" class="secondary-btn">Сбросить</button>
+                    <button id="apply-filters-btn" class="primary-btn">Применить</button>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="box_stats.js"></script>
+    <script src="p_shared.js"></script>
+</body>
+</html>
