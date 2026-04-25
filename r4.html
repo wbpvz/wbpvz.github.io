@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" href="logotype.png" type="image/png">
+<title>Удалить из ПО | WB PVZ</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="data-loader" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-logo"><img src="logotype.png" alt="WB" class="wb-icon"><div class="sidebar-version"><br></div></div>
+             <div class="sidebar-menu">
+                <div class="menu-item" onclick="location.href='returns.html'">
+                     <img src="accept.svg" alt="Товары" class="menu-icon">
+                    <span>Товары</span>
+                     <div class="menu-badge" id="returns-sidebar-badge" style="display: none;">0</div>
+                </div>
+                <div class="menu-item" onclick="location.href='r2.html'">
+                    <img src="box_delivery.svg" alt="Коробки" class="menu-icon">
+                    <span>Коробки</span>
+                </div>
+                <div class="menu-item" onclick="location.href='r3.html'">
+                    <img src="cardboard.svg" alt="Картон" class="menu-icon">
+                    <span>Картон</span>
+                </div>
+                <div class="menu-item active" onclick="location.href='r4.html'">
+                     <img src="trash.svg" alt="Утиль" class="menu-icon">
+                    <span>Утиль</span>
+                     <div class="menu-badge" id="disposal-sidebar-badge" style="display: none;">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <header id="desktop-header-container"></header>
+            <div class="page-with-sidebar-layout">
+                <div class="left-info-panel">
+                    <div class="info-card">
+                        <div class="label">Товаров к утилизации</div>
+                        <div class="count large-black-text" id="disposal-count">0</div>
+                        <button id="dispose-all-btn" class="primary-btn full-width" style="background: var(--error); margin-top: 15px;"><i class="fas fa-trash-alt"></i> Утилизировать все</button>
+                    </div>
+                </div>
+                <div class="right-content-area">
+                    <h2>Товары к утилизации</h2>
+                    <div id="disposal-container" class="product-cards-grid reception-style-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="help-menu side-panel" id="help-menu"></div>
+    <div class="fullscreen-modal" id="search-modal"></div>
+    <div class="fullscreen-modal" id="qr-code-modal"></div>
+    <div class="fullscreen-modal" id="main-settings-modal"></div>
+    <div class="fullscreen-modal" id="voice-settings-modal"></div>
+    <div class="fullscreen-modal" id="scanner-setup-modal"></div>
+    <div class="fullscreen-modal" id="account-modal"></div>
+
+    <div class="fullscreen-modal" id="disposal-confirm-modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <button class="close-modal-btn">&times;</button>
+            <h2 id="disposal-confirm-title">Подтверждение</h2>
+            <p id="disposal-confirm-text" style="font-size: 1.1rem; margin: 20px 0;">Вы уверены, что хотите утилизировать товары в количестве: 0?</p>
+            <div class="modal-buttons-container">
+                <button id="disposal-cancel-btn" class="secondary-btn" style="width: 100%;">Отменить</button>
+                <button id="disposal-confirm-btn" class="primary-btn" style="width: 100%;">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+
+   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="websocket-client.js"></script>
+    <script src="speaker.js"></script>
+    <script src="r4.js"></script>
+    <script src="p_shared.js"></script>
+</body>
+</html>
