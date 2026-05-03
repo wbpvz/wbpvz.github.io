@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" href="logotype.png" type="image/png">
+<title>Картон | WB PVZ</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="data-loader" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-logo"><img src="logotype.png" alt="WB" class="wb-icon"><div class="sidebar-version"><br></div></div>
+             <div class="sidebar-menu">
+                <div class="menu-item" onclick="location.href='returns.html'">
+                    <img src="accept.svg" alt="Товары" class="menu-icon">
+                    <span>Товары</span>
+                     <div class="menu-badge" id="returns-sidebar-badge" style="display: none;">0</div>
+                </div>
+                <div class="menu-item" onclick="location.href='r2.html'">
+                     <img src="box_delivery.svg" alt="Коробки" class="menu-icon">
+                    <span>Коробки</span>
+                </div>
+                <div class="menu-item active" onclick="location.href='r3.html'">
+                    <img src="cardboard.svg" alt="Картон" class="menu-icon">
+                    <span>Картон</span>
+                </div>
+                <div class="menu-item" onclick="location.href='r4.html'">
+                    <img src="trash.svg" alt="Утиль" class="menu-icon">
+                    <span>Утиль</span>
+                    <div class="menu-badge" id="disposal-sidebar-badge" style="display: none;">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <header id="desktop-header-container"></header>
+             <div class="boxes-top-bar" id="cardboard-boxes-top-bar">
+                 <button id="create-cardboard-box-btn" class="primary-btn"><i class="fas fa-plus"></i> <span>Создать коробку</span></button>
+             </div>
+
+            <div class="page-with-sidebar-layout">
+                <div class="left-info-panel" id="cardboard-box-info-container">
+                     <div class="empty-message"><i class="fas fa-recycle"></i><div>Создайте или выберите коробку</div></div>
+                </div>
+                <div class="right-content-area" id="cardboard-box-details-container">
+                    <div class="empty-message">Детали не выбраны</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fullscreen-modal" id="create-cardboard-box-modal">
+        <div class="modal-content">
+            <button class="close-modal-btn" id="close-create-cardboard-box-modal">&times;</button>
+            <h2>Новая коробка для картона</h2>
+            <p>Отсканируйте ШК для коробки</p>
+            <input type="text" id="new-cardboard-box-code" class="modal-input" placeholder="Введите 9 цифр..." maxlength="9" inputmode="numeric">
+            <button id="submit-new-cardboard-box-btn" class="primary-btn">Создать</button>
+        </div>
+    </div>
+
+    <div class="help-menu side-panel" id="help-menu"></div>
+    <div class="fullscreen-modal" id="search-modal"></div>
+    <div class="fullscreen-modal" id="qr-code-modal"></div>
+    <div class="fullscreen-modal" id="main-settings-modal"></div>
+    <div class="fullscreen-modal" id="voice-settings-modal"></div>
+    <div class="fullscreen-modal" id="scanner-setup-modal"></div>
+    <div class="fullscreen-modal" id="account-modal"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="websocket-client.js"></script>
+    <script src="speaker.js"></script>
+    <script src="r3.js"></script>
+    <script src="p_shared.js"></script>
+</body>
+</html>

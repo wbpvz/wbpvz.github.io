@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Возвраты | WB PVZ</title>
+    <link rel="icon" href="logotype.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="data-loader" style="display: none;"></div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-logo"><img src="logotype.png" alt="WB" class="wb-icon"><div class="sidebar-version"><br></div></div>
+             <div class="sidebar-menu">
+                <div class="menu-item active" onclick="location.href='returns.html'">
+                    <img src="accept.svg" alt="Товары" class="menu-icon">
+                    <span>Товары</span>
+                    <div class="menu-badge" id="returns-sidebar-badge" style="display: none;">0</div>
+                </div>
+                <div class="menu-item" onclick="location.href='r2.html'">
+                    <img src="box_delivery.svg" alt="Коробки" class="menu-icon">
+                    <span>Коробки</span>
+                </div>
+                <div class="menu-item" onclick="location.href='r3.html'">
+                    <img src="cardboard.svg" alt="Картон" class="menu-icon">
+                    <span>Картон</span>
+                </div>
+                <div class="menu-item" onclick="location.href='r4.html'">
+                    <img src="trash.svg" alt="Утиль" class="menu-icon">
+                    <span>Утиль</span>
+                    <div class="menu-badge" id="disposal-sidebar-badge" style="display: none;">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <header id="desktop-header-container"></header>
+            <div class="returns-workspace">
+                <div class="return-left-control-panel">
+                     <div class="rl-grey-header compact">
+                         <span style="font-size: 0.85rem; color: var(--text-secondary-color);">Количество товаров</span>
+                         <span id="left-panel-total-count" class="compact-count">0</span>
+                     </div>
+                     
+                     <button id="customer-return-btn" class="primary-btn full-width-btn" style="justify-content: center; padding: 15px; margin-top: 15px; margin-bottom: 15px;">
+                         Возврат от клиента
+                     </button>
+
+                     <div class="info-warning-banner" style="margin-top: 0;">
+                        Добавьте товаров из этого раздела в открытую возвратную коробку в течении 24 часов после присвоения им статуса отказа, автоотмены, или приемка излишка. Для ПВЗ с переупаковкой срок возврата продлевается до 48 часов.
+                     </div>
+                     
+                     <div style="flex-grow: 1;"></div> 
+                </div>
+
+                <div class="returns-grid-wrapper">
+                    <div id="returns-unprocessed-container" class="product-cards-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fullscreen-modal" id="cr-step1-modal">
+        <div class="modal-content">
+            <button class="close-modal-btn">&times;</button>
+            <h2>Шаг 1</h2>
+            <p>Отсканируйте QR-код из клиентского приложения или введите код</p>
+            <div class="info-box-blue" style="margin-bottom: 20px; text-align: center; justify-content: center;">
+                 Отсканируйте QR-код из "Доставок" или из раздела "Возврат товара" в клиентском приложении
+            </div>
+            <div style="margin: 20px 0;">
+                <img src="client_qr_image.png" alt="QR Code" style="width: 150px; height: 150px; object-fit: contain;">
+            </div>
+            <input type="text" id="cr-step1-input" class="full-width-input" placeholder="Введите 9 цифр" maxlength="9" inputmode="numeric">
+            <button id="cr-step1-next-btn" class="primary-btn full-width-btn" style="margin-top: 20px;">Далее</button>
+        </div>
+    </div>
+
+    <div class="fullscreen-modal" id="cr-step2-modal">
+         <div class="modal-content">
+            <button class="close-modal-btn">&times;</button>
+            <h2>Шаг 2</h2>
+            <p>Отсканируйте товар</p>
+            <input type="text" id="cr-step2-input" class="full-width-input" placeholder="Введите 9 цифр" maxlength="9" inputmode="numeric">
+            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                <button id="cr-step2-no-barcode-btn" class="secondary-btn full-width-btn">На товаре нет ШК</button>
+                <button id="cr-step2-next-btn" class="primary-btn full-width-btn">Далее</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fullscreen-modal" id="cr-select-item-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <button class="close-modal-btn">&times;</button>
+            <h3>Выберите товар для возврата</h3>
+            <div id="cr-select-list" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <div class="fullscreen-modal" id="cr-step3-modal">
+        <div class="modal-content">
+            <button class="close-modal-btn">&times;</button>
+            <h2>Шаг 3</h2>
+            <p>Проверьте и добавьте товар к списку возвратов</p>
+            <div class="green-status-box" style="margin-bottom: 20px;">
+                Статус товара<br>
+                <strong>Заявка на возврат товара одобрена</strong>
+            </div>
+            <div id="cr-step3-product-card" class="cr-product-preview"></div>
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button id="cr-step3-cancel-btn" class="secondary-btn" style="flex: 1;">Отменить</button>
+                <button id="cr-step3-add-btn" class="primary-btn" style="flex: 1;">Добавить товар</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fullscreen-modal" id="product-details-modal">
+        <div class="modal-content product-details-content">
+            <button class="close-modal-btn">&times;</button>
+            <div id="pd-modal-content"></div>
+        </div>
+    </div>
+
+    <div class="help-menu side-panel" id="help-menu"></div>
+    <audio id="scanner-sound" src="pressed-scanner.mp3" preload="auto"></audio>
+    <audio id="error-sound" src="failScan.mp3" preload="auto"></audio>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="websocket-client.js"></script>
+    <script src="speaker.js"></script>
+    <script src="returns.js"></script>
+    <script src="p_shared.js"></script>
+</body>
+</html>
