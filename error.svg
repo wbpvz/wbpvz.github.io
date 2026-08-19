@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" id="_Слой_1" data-name="Слой_1" version="1.1" viewBox="0 0 32 32" x="0px" y="0px" width="32px" height="32px" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+  <defs>
+    <style>
+      .st0 {
+        fill: red;
+      }
+
+      .st1 {
+        fill: none;
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5px;
+      }
+    </style>
+  </defs>
+  <path class="st0" d="M4,0h24c2.2,0,4,1.8,4,4v24c0,2.2-1.8,4-4,4H4c-2.2,0-4-1.8-4-4V4C0,1.8,1.8,0,4,0Z" />
+  <path class="st1" d="M25.77,22.94l3.76,3.74" />
+  <path class="st1" d="M29.53,22.94l-3.76,3.74" />
+  <path class="st1" d="M16.75,16.1v-4.59" />
+  <path class="st1" d="M16.75,21.51c-.06,0-.13.03-.17.07-.05.05-.07.11-.07.17,0,.13.11.24.24.24.13,0,.24-.11.24-.24s-.11-.24-.24-.24" />
+  <path class="st1" d="M28.85,18.28l-7.11-12.15c-1.04-1.77-2.94-2.85-4.99-2.85s-3.95,1.08-4.99,2.85L3.19,20.76c-.96,1.64-.96,3.68,0,5.32.96,1.65,2.73,2.66,4.64,2.65h13.49" />
+</svg>

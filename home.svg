@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_Слой_1" data-name="Слой_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Generator: Adobe Illustrator 29.8.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 2)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #fff;
+      }
+
+      .st1 {
+        fill: #179854;
+      }
+
+      .st2 {
+        fill: none;
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5px;
+      }
+    </style>
+  </defs>
+  <path class="st1" d="M4,0h24c2.2,0,4,1.8,4,4v24c0,2.2-1.8,4-4,4H4c-2.2,0-4-1.8-4-4V4C0,1.8,1.8,0,4,0Z"/>
+  <path class="st2" d="M19.62,24.49h2.72c1.11,0,2-.9,2-2V7.49c0-.55-.45-1-1-1h-1.86c-.55,0-1,.45-1,1v2.31"/>
+  <path class="st2" d="M7.62,14.2l7.7-6.6c.75-.64,1.85-.64,2.6,0l7.7,6.6"/>
+  <path class="st0" d="M7.12,19.24c-.41,0-.75.34-.75.75s.34.75.75.75v-1.5ZM18.15,20.52c.29-.29.29-.77,0-1.06l-4.77-4.77c-.29-.29-.77-.29-1.06,0s-.29.77,0,1.06l4.24,4.24-4.24,4.24c-.29.29-.29.77,0,1.06s.77.29,1.06,0l4.77-4.77ZM7.12,19.99v.75h10.5v-1.5H7.12v.75Z"/>
+</svg>
