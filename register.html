@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" href="logotype.png" type="image/png">
+    <title>WB PVZ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        :root {
+          --primary: #A73AFD;
+          --primary-light: #E1BEE7;     
+          --primary-dark: #7B1FA2;      
+          --accent: #A73AFD;            
+          --light-purple-bg: #F3E5F5;   
+          --light-purple-hover: #EEDBFA;
+          --white: #FFFFFF;
+          --gray-lightest: #F8F9FA;
+          --gray-light: #F5F5F5;
+          --gray-medium: #E0E0E0;       
+          --gray-dark: #757575;         
+          --text-primary-color: #212121;
+          --text-secondary-color: #757575;
+          --success: #4CAF50;
+          --error: #D32F2F;
+          --error-bg: #FFEBEE;
+          --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+          --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+          --radius-sm: 8px;
+          --radius-md: 12px;
+          --radius-rect: 12px;          
+          --bg-color: var(--gray-lightest);
+          --content-bg-color: var(--white);
+          --border-color: var(--gray-medium);
+          --transition-speed: 0.2s;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif; }
+
+        html, body { 
+            background: var(--bg-color);
+            color: var(--text-primary-color); 
+            font-size: 16px; 
+            line-height: 1.5;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden !important;
+            position: fixed;
+            touch-action: none;
+            min-width: 320px;
+        }
+
+        h1, h2, h3, h4 { margin-bottom: 0.75em; font-weight: 500; line-height: 1.2; }
+        ul { list-style: none; }
+
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear,
+        input[type="password"]::-webkit-contacts-auto-fill-button,
+        input[type="password"]::-webkit-credentials-auto-fill-button {
+          display: none !important;
+        }
+
+        .container { display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 100px; background: var(--content-bg-color); border-right: 1px solid var(--border-color); position: fixed; left: 0; top: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; }
+        .sidebar-logo { padding: 15px 10px; text-align: center; }
+        .sidebar-logo .wb-icon { width: 40px; height: auto; border-radius: 8px; }
+        .sidebar-version { font-size: 0.7rem; color: var(--text-secondary-color); margin-top: 5px; }
+
+        .input-group { margin-bottom: 1.25rem; text-align: left; width: 100%; position: relative; }
+        .input-group label { display: block; margin-bottom: 6px; font-weight: 500; color: var(--text-secondary-color); }
+
+        input[type="text"], input[type="number"], input[type="tel"], input[type="password"], input[type="email"], textarea { 
+            width: 100%; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: var(--radius-rect); 
+            font-size: 1rem; 
+            background-color: var(--content-bg-color); 
+            color: var(--text-primary-color); 
+            transition: 0.2s; 
+        }
+        input:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(167, 58, 253, 0.2); }
+        
+        .fancy-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background-color: #FAF5FF;
+            border: 1.5px solid var(--primary-light);
+            border-radius: 12px;
+            padding: 8px 12px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            width: 100%;
+        }
+        .fancy-input-wrapper:hover {
+            border-color: var(--primary);
+            background-color: var(--light-purple-hover);
+        }
+        .fancy-input-wrapper:focus-within {
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 3px rgba(167, 58, 253, 0.2);
+            background-color: #fff;
+        }
+        .fancy-input-wrapper input[type="time"],
+        .fancy-input-wrapper input[type="date"] {
+            border: none !important;
+            background: transparent !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--primary-dark);
+            width: 100%;
+            outline: none;
+            cursor: pointer;
+        }
+        .fancy-input-wrapper input[type="time"]::-webkit-calendar-picker-indicator,
+        .fancy-input-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(34%) sepia(85%) saturate(2716%) hue-rotate(256deg) brightness(98%) contrast(105%); 
+            width: 24px;
+            height: 24px;
+            margin-left: 8px;
+        }
+
+        .primary-btn, .secondary-btn { border: none; padding: 12px 20px; border-radius: var(--radius-rect); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 500; transition: all var(--transition-speed); text-decoration: none; }
+        .primary-btn { background: var(--accent); color: var(--white); }
+        .primary-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .secondary-btn { background: var(--content-bg-color); color: var(--text-primary-color); border: 1px solid var(--border-color); }
+        .secondary-btn:hover { background-color: var(--gray-light); }
+        .full-width-btn { width: 100%; }
+        .rounded-btn { border-radius: 50px; }
+
+        .top-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #000000;
+            font-size: 1.05rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 25px;
+            text-decoration: none;
+            transition: color 0.2s;
+            align-self: flex-start;
+            width: max-content;
+        }
+        .top-back-link:hover { color: #333333; }
+        .top-back-link i { font-size: 1.1rem; color: #000000; }
+
+        .custom-phone-group { display: flex; gap: 10px; align-items: stretch; }
+        .custom-country-selector { position: relative; width: 85px; background: var(--white); border: 1px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0; transition: 0.2s; }
+        .custom-country-selector:hover { border-color: var(--primary); }
+        .selected-country { display: flex; align-items: center; gap: 6px; padding: 0 10px; width: 100%; justify-content: space-between; }
+        .selected-country img { width: 24px; height: auto; }
+        .selected-country i { font-size: 0.8rem; color: var(--text-secondary-color); }
+        .country-dropdown-list { position: absolute; top: calc(100% + 5px); left: 0; width: 250px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); list-style: none; padding: 10px 0; margin: 0; z-index: 100; max-height: 250px; overflow-y: auto; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s ease; }
+        .country-dropdown-list.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .country-dropdown-list li { padding: 10px 15px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: background 0.2s; font-size: 0.95rem; color: var(--text-primary-color); }
+        .country-dropdown-list li img { width: 24px; height: auto; }
+        .country-dropdown-list li:hover { background: var(--gray-lightest); color: var(--primary); }
+        
+        .phone-input-wrapper { flex-grow: 1; display: flex; align-items: center; background: var(--white); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0 15px; transition: 0.2s; }
+        .phone-input-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(167, 58, 253, 0.2); }
+        .phone-prefix { font-size: 1rem; color: var(--text-primary-color); font-weight: 500; margin-right: 5px; }
+        .phone-input-wrapper input { border: none !important; box-shadow: none !important; padding: 12px 0 !important; background: transparent !important; width: 100%; }
+        .phone-input-wrapper input:focus { outline: none; }
+        
+        .auth-links-list { display: flex; flex-direction: column; gap: 12px; align-items: center; margin: 20px 0 25px 0; }
+        .auth-text-link { background: none; border: none; color: var(--primary); font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: 0.2s; }
+        .auth-text-link:hover { color: var(--primary-dark); text-decoration: underline; }
+
+        .main-content { margin-left: 100px; width: calc(100% - 100px); height: 100vh; padding: 20px; box-sizing: border-box; display: flex; align-items: stretch; justify-content: stretch; background-color: var(--bg-color); }
+        .auth-form { background: var(--content-bg-color); border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; height: 100%; padding: 40px; display: flex; flex-direction: column; overflow-y: auto; box-sizing: border-box; }
+
+        #step-1, #step-3 { max-width: 500px; width: 100%; margin: 0 auto; padding-bottom: 20px; display: flex; flex-direction: column;}
+        #step-2 { max-width: 1000px; width: 100%; margin: 0 auto; padding-bottom: 20px; display: flex; flex-direction: column;}
+        
+        #step-2 textarea { resize: none; overflow: hidden; min-height: 48px; }
+        #step-2 input[type="radio"], #step-2 input[type="checkbox"] { accent-color: var(--primary); transform: scale(1.2); cursor: pointer; }
+        
+        .radio-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .radio-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: 12px; cursor: pointer; background: #fff; transition: all 0.2s ease; font-size: 1rem; }
+        .radio-item:hover { border-color: var(--primary); background: var(--light-purple-bg); }
+
+        .custom-fancy-select-box { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 13px 16px; border: 1.5px solid var(--primary); border-radius: 12px; background-color: #FAF5FF; font-size: 1rem; font-weight: 500; color: var(--text-primary-color); cursor: pointer; transition: all 0.2s ease; }
+        .custom-fancy-select-box:hover { border-color: var(--primary-dark); background-color: var(--light-purple-bg); }
+        .custom-fancy-select-box.active { border-color: var(--primary-dark); box-shadow: 0 0 0 4px rgba(167, 58, 253, 0.25); background-color: #fff; }
+        .custom-fancy-select-box i { color: var(--primary); transition: transform 0.3s ease; }
+        .custom-fancy-select-box.active i { transform: rotate(180deg); }
+        
+        .custom-fancy-options { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; background: #fff; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 8px 24px rgba(167, 58, 253, 0.15); list-style: none; padding: 8px 0; margin: 0; z-index: 200; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s ease; }
+        .custom-fancy-options.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .custom-fancy-options li { padding: 12px 16px; font-size: 1rem; color: var(--text-primary-color); cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 10px; }
+        .custom-fancy-options li:hover { background: var(--light-purple-hover); color: var(--primary-dark); font-weight: 500; }
+
+        select.custom-select, #step-2 select { width: 100%; padding: 13px 40px 13px 16px; border: 1.5px solid var(--primary); border-radius: 12px; background-color: #FAF5FF; font-size: 1rem; font-weight: 500; color: var(--text-primary-color); outline: none; box-sizing: border-box; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill="%23A73AFD" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); background-repeat: no-repeat; background-position: right 14px center; transition: all 0.2s ease; cursor: pointer; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+        select.custom-select:focus, #step-2 select:focus { border-color: var(--primary-dark); box-shadow: 0 0 0 4px rgba(167, 58, 253, 0.25); background-color: #fff; }
+
+        .photos-container { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
+        .photo-card { position: relative; width: 110px; height: 110px; border-radius: 14px; flex-shrink: 0; }
+        .photo-thumbnail { width: 100%; height: 100%; border-radius: 14px; object-fit: cover; cursor: pointer; border: 1.5px solid var(--border-color); transition: transform 0.2s ease; }
+        .photo-thumbnail:hover { transform: scale(1.02); border-color: var(--primary); }
+        .photo-delete-btn { position: absolute; top: -6px; right: -6px; width: 26px; height: 26px; background: #FF3B30; color: #FFFFFF; border-radius: 50%; border: 2px solid #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: all 0.2s ease; z-index: 10; }
+        .photo-delete-btn:hover { background: #D32F2F; transform: scale(1.15); }
+        .photo-upload-wrapper { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
+        .photo-file-input { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
+        .photo-upload-btn { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #FAF5FF; border: 2px dashed var(--primary); border-radius: 14px; display: flex; flex-direction: column; gap: 4px; align-items: center; justify-content: center; color: var(--primary); font-size: 26px; z-index: 1; transition: 0.2s; }
+        .photo-upload-wrapper:hover .photo-upload-btn { background: var(--light-purple-bg); border-color: var(--primary-dark); }
+        .photo-upload-btn span { font-size: 0.8rem; font-weight: 500; }
+
+        .photo-fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        .photo-fullscreen-overlay img { max-width: 90%; max-height: 80%; border-radius: 12px; object-fit: contain; }
+        .close-photo-btn { margin-top: 20px; padding: 10px 30px; background: var(--primary); color: white; border: none; border-radius: 20px; font-size: 1rem; cursor: pointer; font-weight: 500; }
+
+        .schedule-scroll-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 4px 0 10px 0; background: #fff; border-radius: 12px; }
+        .schedule-row { display: flex; flex-direction: row; align-items: center; gap: 15px; padding: 12px 10px; border-bottom: 1px solid var(--border-color); min-width: max-content; width: max-content; white-space: nowrap; }
+        .schedule-row:last-child { border-bottom: none; }
+        .schedule-row > * { flex-shrink: 0; }
+        
+        .day-label { font-weight: 700; width: 32px; color: var(--text-primary-color); }
+        .schedule-select { padding: 8px 30px 8px 12px !important; border-radius: 8px !important; font-size: 0.9rem !important; width: 200px !important; }
+        .time-inputs { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+        .break-section { display: flex; align-items: center; gap: 15px; margin-left: 10px; }
+        .break-checkbox-label { display: flex; align-items: center; font-size: 0.9rem; cursor: pointer; color: var(--text-primary-color); font-weight: 500; gap: 8px;}
+        .disabled-element { opacity: 0.35; pointer-events: none; filter: grayscale(100%); }
+
+        .label-with-info { display: inline-flex; align-items: center; position: relative; margin-bottom: 6px; }
+        .label-with-info label { margin-bottom: 0; margin-right: 8px; }
+        .info-icon { width: 18px; height: 18px; cursor: pointer; }
+        
+        .tooltip-desktop { display: none; position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.85); color: #fff; padding: 10px 15px; border-radius: 8px; font-size: 0.85rem; width: max-content; max-width: 260px; z-index: 100; line-height: 1.4; font-weight: normal; box-shadow: 0 4px 10px rgba(0,0,0,0.2); white-space: normal; }
+        .tooltip-desktop::before { content: ''; position: absolute; top: 50%; right: 100%; transform: translateY(-50%); border-width: 6px; border-style: solid; border-color: transparent rgba(0, 0, 0, 0.85) transparent transparent; }
+        @media (min-width: 769px) { .label-with-info:hover .tooltip-desktop { display: block; } }
+
+        .mobile-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .mobile-modal-content { background: #fff; padding: 24px; border-radius: 18px; max-width: 340px; width: 90%; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        .mobile-modal-content p { margin-bottom: 20px; font-size: 1.05rem; line-height: 1.4; color: #333; }
+        .modal-actions { display: flex; gap: 10px; }
+        .modal-btn-confirm { background-color: var(--error); color: white; border: none; padding: 12px 0; border-radius: 12px; flex: 1; font-size: 0.95rem; cursor: pointer; font-weight: bold; }
+        .modal-btn-cancel { background-color: var(--gray-light); color: var(--text-primary-color); border: 1px solid var(--border-color); padding: 12px 0; border-radius: 12px; flex: 1; font-size: 0.95rem; cursor: pointer; font-weight: 500; }
+
+        .circular-spinner { width: 80px; height: 80px; animation: rotate 2s linear infinite; }
+        .circular-spinner .path { stroke: var(--primary); stroke-linecap: round; animation: dash 1.5s ease-in-out infinite; }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        @keyframes dash {
+            0% { stroke-dasharray: 1, 200; stroke-dashoffset: 0; }
+            50% { stroke-dasharray: 89, 200; stroke-dashoffset: -35px; }
+            100% { stroke-dasharray: 89, 200; stroke-dashoffset: -124px; }
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: row; 
+            flex-wrap: wrap; 
+            justify-content: center;
+            align-items: flex-end;
+            gap: 12px;
+            z-index: 10000;
+            pointer-events: none; 
+            width: 95%;
+            max-width: none;
+        }
+        .custom-toast {
+            background-color: rgb(254, 0, 0);
+            color: #ffffff;
+            padding: 14px 18px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 8px 24px rgba(254, 0, 0, 0.3);
+            pointer-events: auto; 
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .custom-toast.show { opacity: 1; transform: translateY(0); }
+        .custom-toast img.toast-icon { width: 24px; height: 24px; flex-shrink: 0; }
+        .custom-toast .toast-text { flex-grow: 1; font-size: 0.95rem; line-height: 1.4; font-weight: 500; }
+        .custom-toast .toast-close { cursor: pointer; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; font-weight: bold; flex-shrink: 0; opacity: 0.8; transition: 0.2s; }
+        .custom-toast .toast-close:hover { opacity: 1; }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none !important; }
+            .main-content { margin-left: 0; width: 100%; padding: 10px; height: 100vh; }
+            .auth-form { padding: 24px 15px; border-radius: 16px; }
+            .custom-country-selector, .phone-input-wrapper { background: #F8F8F8; border: none; height: 50px; border-radius: 12px; }
+            .auth-links-list { flex-direction: row; justify-content: space-between; margin-top: 10px; margin-bottom: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="logotype.png" alt="WB" class="wb-icon">
+                <div class="sidebar-version">V1.9.0<br></div>
+                <hr class="sidebar-divider">
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="auth-form" id="register-form">
+                
+                <!-- ШАГ 1: Номер и пароль -->
+                <div id="step-1">
+                    <h1 style="color: black; font-weight: bold; font-size: 1.8rem; text-align: center; margin-bottom: 25px;">Регистрация ПВЗ</h1>
+                    
+                    <div class="input-group">
+                        <div class="custom-phone-group" id="reg-phone-wrapper">
+                            <div class="custom-country-selector">
+                                <div class="selected-country">
+                                    <img class="flag-img" src="ru.svg" alt="flag">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <ul class="country-dropdown-list">
+                                   <li data-code="7" data-prefix="+7" data-length="10" data-img="ru.svg"><img src="ru.svg" alt="ru"> <span>+7</span></li>
+                                   <li data-code="375" data-prefix="+375" data-length="9" data-img="by.svg"><img src="by.svg" alt="by"> <span>+375</span></li>
+                                   <li data-code="7" data-prefix="+7" data-length="10" data-img="kz.svg"><img src="kz.svg" alt="kz"> <span>+7</span></li>
+                                   <li data-code="374" data-prefix="+374" data-length="8" data-img="ar.svg"><img src="ar.svg" alt="ar"> <span>+374</span></li>
+                                   <li data-code="996" data-prefix="+996" data-length="9" data-img="kg.svg"><img src="kg.svg" alt="kg"> <span>+996</span></li>
+                                   <li data-code="998" data-prefix="+998" data-length="9" data-img="uz.svg"><img src="uz.svg" alt="uz"> <span>+998</span></li>
+                                   <li data-code="995" data-prefix="+995" data-length="9" data-img="ge.svg"><img src="ge.svg" alt="ge"> <span>+995</span></li>
+                                   <li data-code="992" data-prefix="+992" data-length="9" data-img="tj.svg"><img src="tj.svg" alt="tj"> <span>+992</span></li>
+                                   <li data-code="993" data-prefix="+993" data-length="8" data-img="tm.svg"><img src="tm.svg" alt="tm"> <span>+993</span></li>
+                                   <li data-code="994" data-prefix="+994" data-length="9" data-img="az.svg"><img src="az.svg" alt="az"> <span>+994</span></li>
+                                   <li data-code="90" data-prefix="+90" data-length="10" data-img="tr.svg"><img src="tr.svg" alt="tr"> <span>+90</span></li>
+                                   <li data-code="972" data-prefix="+972" data-length="9" data-img="iz.svg"><img src="iz.svg" alt="iz"> <span>+972</span></li>
+                                   <li data-code="380" data-prefix="+380" data-length="9" data-img="ua.svg"><img src="ua.svg" alt="ua"> <span>+380</span></li>
+                                   <li data-code="44" data-prefix="+44" data-length="10" data-img="uk.svg"><img src="uk.svg" alt="uk"> <span>+44</span></li>
+                                </ul>
+                            </div>
+                            <div class="phone-input-wrapper">
+                                <span class="phone-prefix">+7</span>
+                                <input type="tel" class="phone-input" id="reg-phone" required inputmode="numeric" placeholder="Номер телефона">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group" style="position: relative;">
+                        <input type="password" id="reg-password" placeholder="Пароль" required style="width: 100%; padding-right: 40px; box-sizing: border-box;">
+                        <i class="fas fa-eye" id="toggle-password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-secondary-color); font-size: 1.2rem;"></i>
+                    </div>
+
+                    <button id="reg-next-btn" class="primary-btn rounded-btn full-width-btn" style="margin-top: 20px;">Далее</button>
+                    
+                    <div class="auth-links-list" style="margin-top: 20px; text-align: center; width: 100%; justify-content: center;">
+                        <a href="login.html" class="auth-text-link">Уже есть аккаунт? Войти</a>
+                    </div>
+                </div>
+
+                <!-- ШАГ 2: Информация о ПВЗ -->
+                <div id="step-2" style="display: none;">
+                    <div id="reg-back-btn" class="top-back-link"><i class="fas fa-arrow-left"></i> Назад</div>
+                    <h1 style="color: black; font-weight: bold; font-size: 1.8rem; text-align: center; margin-bottom: 25px;">Введите информацию о ПВЗ</h1>
+                    
+                    <div class="input-group">
+                        <div class="label-with-info">
+                            <label>Адрес</label>
+                            <img src="info.svg" class="info-icon" id="address-info-icon" alt="Info">
+                            <div class="tooltip-desktop">В данное поле необходимо ввести полный и конкретный адрес пункта выдачи.</div>
+                        </div>
+                        <input type="text" id="reg-address" placeholder="Введите адрес ПВЗ" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Количество примерочных</label>
+                        <input type="number" id="reg-fitting-rooms" placeholder="От 1 до 100" min="1" max="100" required>
+                    </div>
+
+                    <div class="input-group" id="pvz-type-wrapper">
+                        <label>Вид ПВЗ</label>
+                        <div class="custom-fancy-select-box" id="pvz-fancy-box">
+                            <span id="pvz-selected-text">Выберите вид ПВЗ</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <ul class="custom-fancy-options" id="pvz-fancy-options">
+                            <li data-value="Пункт в отделении Почты России">Пункт в отделении Почты России</li>
+                            <li data-value="Отдельное здание">Отдельное здание</li>
+                        </ul>
+                        <input type="hidden" id="reg-pvz-type" required>
+                    </div>
+
+                    <div class="input-group" id="working-hours-group" style="display: none;">
+                        <label style="margin-top: 15px;">Настройте график работы ПВЗ ниже</label>
+                        
+                        <div id="schedule-building" style="display: none;">
+                            <div class="radio-list">
+                                <label class="radio-item"><input type="radio" name="building_schedule" value="Ежедневно: 10:00 - 22:00" checked> Ежедневно: 10:00 - 22:00</label>
+                                <label class="radio-item"><input type="radio" name="building_schedule" value="Ежедневно: 08:00 - 22:00"> Ежедневно: 08:00 - 22:00</label>
+                                <label class="radio-item"><input type="radio" name="building_schedule" value="Ежедневно: 09:00 - 21:00"> Ежедневно: 09:00 - 21:00</label>
+                                <label class="radio-item"><input type="radio" name="building_schedule" value="Ежедневно: 10:00 - 21:00"> Ежедневно: 10:00 - 21:00</label>
+                            </div>
+                        </div>
+
+                        <div id="schedule-post" style="display: none;" class="schedule-scroll-wrapper">
+                            <div id="post-days-container"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Как добраться</label>
+                        <textarea id="reg-how-to-get" placeholder="Ориентиры и маршрут" required></textarea>
+                    </div>
+
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Прикрепите фото <span id="photo-limit-text" style="font-weight: normal; font-size: 0.85rem; color: var(--text-secondary-color);"></span></label>
+                        <div class="photos-container" id="photos-list">
+                            <div class="photo-upload-wrapper" id="photo-upload-btn-wrapper">
+                                <input type="file" accept="image/*" multiple class="photo-file-input" id="photo-input">
+                                <div class="photo-upload-btn">
+                                    <i class="fas fa-plus"></i>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="reg-next-to-3-btn" class="primary-btn rounded-btn full-width-btn" style="margin-top: 20px;">Далее</button>
+                </div>
+
+                <!-- ШАГ 3: Данные о собственнике -->
+                <div id="step-3" style="display: none;">
+                    <div id="reg-back-to-2-btn" class="top-back-link"><i class="fas fa-arrow-left"></i> Назад</div>
+                    <h1 style="color: black; font-weight: bold; font-size: 1.8rem; text-align: center; margin-bottom: 25px;">Введите данные о собственнике ПВЗ</h1>
+                    
+                    <div class="input-group">
+                        <label>Фамилия</label>
+                        <input type="text" id="reg-surname" placeholder="Фамилия" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Имя</label>
+                        <input type="text" id="reg-name" placeholder="Имя" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Отчество</label>
+                        <input type="text" id="reg-patronymic" placeholder="Отчество" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Дата рождения</label>
+                        <div class="fancy-input-wrapper">
+                            <input type="date" id="reg-dob" onclick="this.showPicker()" required>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-top: 25px;">
+                        <label>Электронная почта</label>
+                        <input type="email" id="reg-email" placeholder="example@mail.ru" required>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary-color); margin-top: 6px; line-height: 1.3;">
+                            Эта почта привяжется к номеру, который вы ввели в начале регистрации. На эту почту будет приходить письмо со сбросом пароля и коды для входа.
+                        </p>
+                    </div>
+
+                    <button id="reg-final-submit-btn" class="primary-btn rounded-btn full-width-btn" style="margin-top: 25px;">Зарегистрировать ПВЗ</button>
+                </div>
+
+                <!-- ШАГ 4: Загрузка -->
+                <div id="loading-step" style="display: none; height: 100%; flex-direction: column; align-items: center; justify-content: center;">
+                    <svg class="circular-spinner" viewBox="25 25 50 50">
+                        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="5" stroke-miterlimit="10"/>
+                    </svg>
+                    <h2 style="color: var(--primary); margin-top: 25px; text-align: center; font-size: 1.3rem;">Регистрация ПВЗ...<br>Пожалуйста подождите...</h2>
+                </div>
+
+                <!-- ШАГ 5: Успешная регистрация -->
+                <div id="success-step" style="display: none; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                    <img src="ok.svg" alt="Success" style="width: 90px; height: 90px; margin-bottom: 20px;">
+                    <h2 style="color: #212121; margin-bottom: 30px; font-size: 1.5rem;">Регистрация вашего ПВЗ завершена!</h2>
+                    <button id="go-to-login-btn" class="primary-btn rounded-btn full-width-btn" style="max-width: 300px;">Перейти ко входу</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалки (остаются как есть) -->
+    <div id="address-mobile-modal" class="mobile-modal-overlay">
+        <div class="mobile-modal-content">
+            <p>В данное поле необходимо ввести полный и конкретный адрес пункта выдачи.</p>
+            <button id="close-address-modal" class="modal-btn-confirm" style="background-color: var(--primary); width: 100%;">Понятно</button>
+        </div>
+    </div>
+
+    <div id="delete-photo-modal" class="mobile-modal-overlay">
+        <div class="mobile-modal-content">
+            <p>Вы действительно хотите удалить эту фотографию?</p>
+            <div class="modal-actions">
+                <button id="cancel-delete-photo" class="modal-btn-cancel">Отмена</button>
+				<button id="confirm-delete-photo" class="modal-btn-confirm">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="photo-modal" class="photo-fullscreen-overlay">
+        <img id="photo-modal-img" src="" alt="Full screen">
+        <button class="close-photo-btn" id="close-photo-modal">Закрыть</button>
+    </div>
+
+    <!-- Контейнер для тостов ошибок -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="p_shared.js"></script> 
+    <script src="register.js"></script>
+</body>
+</html>

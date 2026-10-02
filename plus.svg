@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 1220 1220">
+  <!-- white filled background circle with thin black outline -->
+  <circle cx="610" cy="610" r="585" fill="white" stroke="black" stroke-width="20"/>
+
+  <!-- magnifying glass -->
+  <circle cx="590" cy="590" r="255" fill="none" stroke="#4a4a4a" stroke-width="26" stroke-linecap="round"/>
+  <line x1="772" y1="772" x2="865" y2="865" stroke="#4a4a4a" stroke-width="26" stroke-linecap="round"/>
+
+  <!-- white circle behind the plus -->
+  <circle cx="590" cy="590" r="165" fill="white"/>
+
+  <!-- plus -->
+  <line x1="590" y1="462" x2="590" y2="718" stroke="#3c3c3c" stroke-width="26" stroke-linecap="round"/>
+  <line x1="462" y1="590" x2="718" y2="590" stroke="#3c3c3c" stroke-width="26" stroke-linecap="round"/>
+</svg>

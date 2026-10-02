@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" href="logotype.png" type="image/png">
+    <title>WB PVZ</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .placeholder-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #888;
+        }
+        .placeholder-container h3 {
+            margin: 15px 0 5px 0;
+            color: #aaa;
+        }
+        .bd-label {
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .box-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+        .bd-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .download-sticker-btn {
+            background-color: #f3e8ff;
+            color: #6b21a8;
+            width: 100%;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .download-sticker-btn:hover {
+            background-color: #e9d5ff;
+        }
+        .step-circle {
+            width: 28px;
+            height: 28px;
+            background: #f3f4f6;
+            color: #6b21a8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        /* Стили для красивого списка (select) */
+        .beautiful-select {
+            appearance: none;
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background-color: #f9fafb;
+            color: #374151;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+        }
+        .beautiful-select:focus, .beautiful-select:hover {
+            border-color: #a855f7;
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+        }
+
+        /* Анимация появления для нового вью */
+        #normal-return-view {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .textarea-styled {
+            width: 100%; 
+            height: 80px; 
+            resize: vertical; 
+            border-radius: 10px; 
+            padding: 12px; 
+            border: 2px solid #e5e7eb; 
+            outline: none;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #f9fafb;
+        }
+        .textarea-styled:focus {
+            border-color: #a855f7;
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="data-loader" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-logo"><img src="logotype.png" alt="WB" class="wb-icon"><div class="sidebar-version"><br></div></div>
+             <div class="sidebar-menu">
+                <div class="menu-item" onclick="location.href='returns.html'">
+                    <img src="accept.svg" alt="Товары" class="menu-icon">
+                    <span>Товары</span>
+                    <div class="menu-badge" id="returns-sidebar-badge" style="display: none;">0</div>
+                </div>
+                <div class="menu-item active" onclick="location.href='r2.html'">
+                    <img src="box_delivery.svg" alt="Коробки" class="menu-icon">
+                    <span>Коробки</span>
+                </div>
+                <div class="menu-item" onclick="location.href='r3.html'">
+                    <img src="cardboard.svg" alt="Картон" class="menu-icon">
+                    <span>Картон</span>
+                </div>
+                <div class="menu-item" onclick="location.href='r4.html'">
+                    <img src="trash.svg" alt="Утиль" class="menu-icon">
+                    <span>Удалить из ПО</span>
+                    <div class="menu-badge" id="disposal-sidebar-badge" style="display: none;">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <header id="desktop-header-container"></header>
+            
+            <!-- Основная рабочая область коробок -->
+            <div class="box-workspace-layout">
+                <div class="box-mode-tabs">
+                    <button class="box-tab-btn active" data-mode="normal" id="tab-normal">Для товаров</button>
+                    <button class="box-tab-btn" data-mode="defective" id="tab-defective">Для брака</button>
+                </div>
+
+                <div class="horizontal-box-strip" id="box-strip-container">
+                </div>
+
+                <div class="box-main-split" id="box-main-split" style="display: none;"> 
+                    <div class="box-left-details-panel" id="box-details-panel">
+                    </div>
+
+                    <div class="box-right-content-panel">
+                         <div id="return-item-search-container" class="search-box" style="margin-bottom: 15px;">
+                            <input type="text" id="return-item-search" placeholder="Сканируйте товар (любые 10 цифр)..." maxlength="10" inputmode="numeric">
+                            <button id="add-item-to-box-btn" class="secondary-btn"><i class="fas fa-plus"></i></button>
+                        </div>
+                        
+                        <div id="box-items-container" class="box-items-grid">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="no-box-selected-placeholder" class="placeholder-container" style="flex-grow: 1;">
+                    <img src="wb_courier.png" alt="Курьер" style="width: 250px; object-fit: contain;">
+                    <h3>Коробка не выбрана</h3>
+                    <p>Выберите коробку, или создайте её</p>
+                </div>
+            </div>
+
+            <!-- Интегрированное вью оформления возврата (вместо модалки) -->
+            <div id="normal-return-view" style="display: none; flex-direction: column; flex-grow: 1; background: #fff; border-radius: 12px; margin: 20px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <div class="modal-header" style="display: flex; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #f3f4f6; margin-bottom: 20px;">
+                    <button class="back-arrow-btn" id="close-normal-return-btn" style="background: none; border: none; font-size: 1.1em; cursor: pointer; color: #333; display: flex; align-items: center; gap: 10px; font-weight: 500;">
+                        <i class="fas fa-arrow-left"></i> Вернуться к открытой коробке
+                    </button>
+                </div>
+                
+                <div class="modal-split-layout" style="flex-grow: 1; gap: 40px; align-items: flex-start; display: flex; flex-direction: row;">
+                    <!-- Левая часть с фото -->
+                    <div class="modal-left-card" id="normal-return-card-preview" style="flex: 1; min-width: 300px; border-right: 1px solid #e5e7eb; padding-right: 30px;">
+                    </div>
+
+                    <!-- Правая часть с шагами -->
+                    <div class="modal-right-controls" style="flex: 2; padding-top: 10px; padding-left: 10px;">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                            <div class="step-circle">1</div>
+                            <span style="font-size: 1.1em; font-weight: 500;">Отклейте старый стикер и отложите его</span>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div class="step-circle">2</div>
+                            <span style="font-size: 1.1em; font-weight: 500;">Выберите размер сейф пакета и поместите в него товар</span>
+                        </div>
+                        
+                        <div class="custom-radio-group" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-left: 43px; margin-bottom: 10px;">
+                            <label class="radio-card"><input type="radio" name="safe-pkg" value="Малый"><span>Малый</span></label>
+                            <label class="radio-card"><input type="radio" name="safe-pkg" value="Средний"><span>Средний</span></label>
+                            <label class="radio-card"><input type="radio" name="safe-pkg" value="Большой"><span>Большой</span></label>
+                        </div>
+                        <div class="custom-radio-group" style="margin-left: 43px; margin-bottom: 30px;">
+                            <label class="radio-card" style="width: 100%;"><input type="radio" name="safe-pkg" value="Пакет не нужен" checked><span>Пакет не нужен</span></label>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div class="step-circle">3</div>
+                            <span style="font-size: 1.1em; font-weight: 500;">Наклейте новый стикер на упаковку и отсканируйте его</span>
+                        </div>
+                        
+                        <div style="margin-left: 43px; margin-bottom: 20px;">
+                            <input type="text" id="normal-return-sticker-input" class="modal-input" placeholder="Отсканируйте новый стикер" maxlength="10" inputmode="numeric">
+                            <button id="confirm-normal-return-btn" style="display:none;"></button>
+                        </div>
+
+                        <div style="margin-left: 43px;">
+                            <video src="an.mp4" autoplay loop muted playsinline style="max-width: 300px; border-radius: 8px;"></video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Модалка сканирования стикера коробки -->
+    <div class="fullscreen-modal" id="create-box-modal">
+        <div class="modal-content">
+            <button class="close-modal-btn" id="close-create-box-modal">&times;</button>
+            <h2 id="create-box-title">Отсканируйте стикер коробки</h2>
+            
+            <video src="an.mp4" autoplay loop muted playsinline style="display: block; width: 200px; height: 200px; border-radius: 8px; margin: 0 auto 20px auto; object-fit: contain;"></video>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="new-box-code" class="modal-input" style="flex-grow: 1; margin-bottom: 0;" placeholder="Отсканируйте ШК коробки или введите цифры под ШК" maxlength="10" inputmode="numeric">
+                <button id="submit-new-box-btn" class="primary-btn icon-only" style="flex-shrink: 0;"><i class="fas fa-check"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалки Брак -->
+    <div class="fullscreen-modal" id="defective-warning-modal">
+        <div class="modal-content modal-wide">
+            <button class="close-modal-btn">&times;</button>
+            <h3>Оформление возврата бракованного товара</h3>
+            <div class="modal-split-layout">
+                <div class="modal-left-card" id="defective-warning-preview"></div>
+                <div class="modal-right-controls">
+                    <div class="warning-box-orange">
+                        Данный товар является бракованным. Перед заполнением заполните форму о браке.
+                    </div>
+                    <button id="go-to-defective-form-btn" class="primary-btn" style="width: 100%; margin-top: 20px;">Заполнить форму</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fullscreen-modal" id="defective-form-modal">
+        <div class="modal-content" style="max-width: 600px; text-align: left; padding-bottom: 30px;">
+            <button class="close-modal-btn" id="close-defective-form-modal">&times;</button>
+            <h3>Заполните форму о браке</h3>
+            
+            <label for="defective-reason-select" style="display:block; margin-top:20px; margin-bottom:8px; font-weight:bold; color:var(--text-secondary-color);">Выберите причину:</label>
+            <select id="defective-reason-select" class="beautiful-select">
+            </select>
+            <input type="text" id="defective-reason-other-input" class="modal-input" placeholder="Укажите причину" style="display:none; margin-top:10px;">
+
+            <div class="photo-upload-section" style="margin-top: 20px;">
+                <label style="display:block; margin-bottom:8px; font-weight:bold; color:var(--text-secondary-color);">Фотографии дефекта:</label>
+                <div class="photo-grid-5">
+                    <div class="photo-slot add-btn" id="add-photo-btn">
+                        <i class="fas fa-plus"></i>
+                        <input type="file" id="photo-input-hidden" accept="image/png, image/jpeg, image/jpg" style="display:none;" multiple>
+                    </div>
+                    <div class="photo-slot preview" id="p-slot-0"></div>
+                    <div class="photo-slot preview" id="p-slot-1"></div>
+                    <div class="photo-slot preview" id="p-slot-2"></div>
+                    <div class="photo-slot preview" id="p-slot-3"></div>
+                </div>
+            </div>
+
+            <div class="requirements-tooltip-container" style="margin-top: 10px;">
+                <span class="req-text">Требования к фотографиям</span>
+                <div class="req-tooltip-box">
+                    <strong>Требования к фотографиям:</strong><br>
+                    Фото формата только png/jpg/jpeg<br>
+                    Необходимо фото:<br>
+                    - Передняя часть товара<br>
+                    - Задняя часть товара<br>
+                    - ШК товара<br>
+                    - Брак товара
+                </div>
+            </div>
+
+            <!-- Добавлено поле комментария -->
+            <label for="defective-comment" style="display:block; margin-top:20px; margin-bottom:8px; font-weight:bold; color:var(--text-secondary-color);">Комментарий к браку (обязательно):</label>
+            <textarea id="defective-comment" class="textarea-styled" placeholder="Опишите дефект подробнее..."></textarea>
+
+            <button id="submit-defective-full-btn" class="primary-btn" style="width: 100%; margin-top: 30px;">Сохранить и добавить в коробку</button>
+        </div>
+    </div>
+
+    <div class="fullscreen-modal" id="image-viewer-modal" style="z-index: 10005;">
+        <div class="modal-content" style="background: transparent; box-shadow: none; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+            <button class="close-modal-btn" style="color: white; font-size: 3rem; top: 20px; right: 20px;">&times;</button>
+            <img id="full-screen-image" src="" style="max-width: 90%; max-height: 90%; border-radius: 8px;">
+        </div>
+    </div>
+
+    <div class="help-menu side-panel" id="help-menu"></div>
+    <div class="fullscreen-modal" id="search-modal"></div>
+    <div class="fullscreen-modal" id="qr-code-modal"></div>
+    <div class="fullscreen-modal" id="account-modal"></div>
+    <div class="fullscreen-modal" id="scanner-setup-modal"></div>
+    <div id="feedback-modal" class="fullscreen-modal"></div>
+
+    <audio id="success-sound" src="successScan.mp3" preload="auto"></audio>
+    <audio id="sound-scan-box" src="scan_box_sticker.mp3" preload="auto"></audio>
+    <audio id="sound-box-exists" src="box_already_accepted.mp3" preload="auto"></audio>
+    <audio id="sound-box-closed" src="box_closed.mp3" preload="auto"></audio>
+    <audio id="sound-defect-mark" src="add_defect_mark.mp3" preload="auto"></audio>
+    <audio id="sound-incorrect-sticker" src="incorrect_sticker_code.mp3" preload="auto"></audio>
+    <audio id="sound-fail" src="failScan.mp3" preload="auto"></audio>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="speaker.js"></script>
+    <script src="r2.js"></script>
+    <script src="p_shared.js"></script>
+</body>
+</html>
