@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="circleClip">
+      <circle cx="256" cy="256" r="256"/>
+    </clipPath>
+  </defs>
+
+  <!-- Белый фон -->
+  <rect width="512" height="512" fill="white" clip-path="url(#circleClip)"/>
+
+  <!-- Верхняя синяя полоса -->
+  <rect x="0" y="96" width="512" height="48" fill="#0038B8" clip-path="url(#circleClip)"/>
+
+  <!-- Нижняя синяя полоса -->
+  <rect x="0" y="368" width="512" height="48" fill="#0038B8" clip-path="url(#circleClip)"/>
+
+  <!-- Звезда Давида -->
+  <g transform="translate(256 256)" stroke="#0038B8" stroke-width="18" fill="none">
+    <polygon points="0,-90 78,45 -78,45"/>
+    <polygon points="0,90 78,-45 -78,-45"/>
+  </g>
+</svg>
