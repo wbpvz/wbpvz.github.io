@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="512" height="512" role="img" aria-label="Круглый флаг Турции">
+  <circle cx="60" cy="60" r="60" fill="#E30A17"/>
+  <circle cx="48" cy="60" r="22" fill="#FFFFFF"/>
+  <circle cx="58" cy="60" r="16" fill="#E30A17"/>
+  <polygon fill="#FFFFFF" points="
+    76.000,51.000
+    78.021,57.219
+    84.560,57.219
+    79.269,61.062
+    81.290,67.281
+    76.000,63.438
+    70.710,67.281
+    72.731,61.062
+    67.440,57.219
+    73.979,57.219
+  "/>
+</svg>
