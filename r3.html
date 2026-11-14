@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" href="logotype.png" type="image/png">
+    <title>WB PVZ</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Экран загрузки в стиле Win11 (как на странице коробок) */
+        #data-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            z-index: 9999;
+        }
+        .win11-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0078D4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .placeholder-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #888;
+        }
+        .placeholder-container h3 {
+            margin: 15px 0 5px 0;
+            color: #aaa;
+        }
+
+        /* Панель коробок сверху (лента) — как в коробках */
+        .horizontal-box-strip {
+            background: #fff;
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .box-strip-item-new {
+            min-width: 130px;
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            background: #fff;
+            transition: transform 0.2s;
+        }
+        .box-strip-item-new:hover {
+            transform: translateY(-2px);
+        }
+        .box-strip-item-new.create-btn {
+            border: 2px dashed #000;
+            align-items: center;
+            justify-content: center;
+        }
+        .box-strip-item-new.open {
+            border: 2px solid #22c55e;
+            color: #000;
+        }
+        .box-strip-item-new.closed {
+            border: 2px solid #ef4444;
+            color: #000;
+        }
+        .copy-btn-svg {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+        .copy-btn-svg:hover { opacity: 1; }
+
+        /* Левая панель деталей — как в коробках, но с выравниванием по правому краю */
+        .box-details-custom {
+            background: #fff;
+            border-radius: 16px 16px 0 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            text-align: right;
+            height: 100%;
+        }
+        .bd-top-right {
+            text-align: right;
+            width: 100%;
+        }
+        .bd-small-label {
+            font-size: 0.85em;
+            color: #000;
+            margin-bottom: 2px;
+        }
+        .bd-large-id {
+            font-size: 1.7em;
+            font-weight: bold;
+            color: #000;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .bd-divider {
+            height: 2px;
+            background: #e5e7eb;
+            margin: 15px 0;
+            width: 100%;
+        }
+        .bd-icons {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+        .bd-close-date {
+            width: 100%;
+            text-align: right;
+            font-size: 0.95em;
+            color: #000;
+            margin-bottom: 20px;
+        }
+        .bd-close-date.muted { color: #888; }
+        .bd-occupancy-banner {
+            width: calc(100% + 40px);
+            margin-left: -20px;
+            padding: 15px 20px;
+            background: repeating-linear-gradient(45deg, #f9fafb, #f9fafb 10px, #f3f4f6 10px, #f3f4f6 20px);
+            text-align: right;
+            margin-bottom: 20px;
+            border-top: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .bd-occupancy-val {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #000;
+            line-height: 1.1;
+        }
+        .cb-panel-btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        /* Правая часть: иконка картона + количество */
+        .cb-right-card {
+            flex: 1;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+        }
+        .cb-right-img {
+            width: 160px;
+            max-width: 60%;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+        .cb-qty-line {
+            font-size: 2.8em;
+            font-weight: 900;
+            color: #000;
+            line-height: 1.1;
+        }
+        .cb-qty-line .cb-unit {
+            font-size: 0.5em;
+            font-weight: 600;
+            color: #555;
+            margin-left: 6px;
+        }
+        .cb-qty-label {
+            margin-top: 6px;
+            font-size: 1.2em;
+            color: #888;
+        }
+        .cb-qty-hint {
+            margin-top: 12px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        /* Модалка количества картона */
+        .cb-qty-modal-code {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 15px;
+        }
+        .cb-qty-modal-img {
+            display: block;
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            margin: 0 auto 15px auto;
+        }
+        .cb-qty-input {
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            padding: 12px;
+            margin: 10px 0 20px 0;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f9fafb;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .cb-qty-input:focus {
+            border-color: #a855f7;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+        }
+
+        /* Мобильные вкладки (Товары / Коробки / Картон) — только на телефоне */
+        .rt-mtabs { display: none; gap: 8px; margin-bottom: 10px; flex-shrink: 0; }
+        .rt-mtabs a {
+            flex: 1; padding: 10px 8px; text-align: center; text-decoration: none;
+            font-size: 0.9rem; font-weight: 600; color: var(--text-secondary-color, #757575);
+            background: #fff; border: 1px solid var(--border-color, #e0e0e0); border-radius: 999px;
+        }
+        .rt-mtabs a.active { color: #fff; background: var(--primary, #a73afd); border-color: var(--primary, #a73afd); }
+
+        @media (max-width: 768px) {
+            .rt-mtabs { display: flex; }
+            .main-content { display: flex; flex-direction: column; padding: 10px 12px; }
+            .box-workspace-layout { flex: 1 1 auto; height: auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+            .horizontal-box-strip { flex-shrink: 0; }
+            .box-main-split { flex-direction: column; flex-grow: 0; overflow: visible; gap: 12px; }
+            .box-left-details-panel { width: auto; }
+            .box-details-custom { height: auto; }
+            .box-right-content-panel { overflow: visible; }
+            .cb-right-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="data-loader">
+        <div class="win11-spinner"></div>
+        <div style="margin-top: 25px; font-size: 20px; font-weight: 500; color: #111;">Немного подождите...</div>
+        <div style="margin-top: 10px; font-size: 15px; color: #555;">Выполняем загрузку данных...</div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-logo"><img src="logotype.png" alt="WB" class="wb-icon"><div class="sidebar-version"><br></div></div>
+            <div class="sidebar-menu">
+                <div class="menu-item" onclick="location.href='returns.html'">
+                    <img src="accept.svg" alt="Товары" class="menu-icon">
+                    <span>Товары</span>
+                    <div class="menu-badge" id="returns-sidebar-badge" style="display: none;">0</div>
+                </div>
+                <div class="menu-item" onclick="location.href='r2.html'">
+                    <img src="box_delivery.svg" alt="Коробки" class="menu-icon">
+                    <span>Коробки</span>
+                </div>
+                <div class="menu-item active" onclick="location.href='r3.html'">
+                    <img src="cardboard.svg" alt="Картон" class="menu-icon">
+                    <span>Картон</span>
+                </div>
+                <div class="menu-item" onclick="location.href='r4.html'">
+                    <img src="trash.svg" alt="Утиль" class="menu-icon">
+                    <span>Удалить из ПО</span>
+                    <div class="menu-badge" id="disposal-sidebar-badge" style="display: none;">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="rt-mtabs">
+                <a href="returns.html">Товары</a>
+                <a href="r2.html">Коробки</a>
+                <a class="active" href="r3.html">Картон</a>
+            </div>
+            <header id="desktop-header-container"></header>
+
+            <!-- Основная рабочая область картона (структура как в коробках) -->
+            <div class="box-workspace-layout">
+                <!-- Панель коробок сверху -->
+                <div class="horizontal-box-strip" id="cardboard-strip-container"></div>
+
+                <div class="box-main-split" id="cardboard-main-split" style="display: none;">
+                    <!-- Левая панель -->
+                    <div class="box-left-details-panel box-details-custom" id="cardboard-details-panel"></div>
+
+                    <!-- Правая часть -->
+                    <div class="box-right-content-panel" id="cardboard-right-panel"></div>
+                </div>
+
+                <div id="no-cardboard-selected-placeholder" class="placeholder-container" style="flex-grow: 1;">
+                    <img src="wb_courier.png" alt="Курьер" style="width: 250px; object-fit: contain;">
+                    <h3>Коробка не выбрана</h3>
+                    <p>Выберите коробку, или создайте её</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка сканирования стикера коробки (такая же, как в коробках) -->
+    <div class="fullscreen-modal" id="create-cardboard-box-modal">
+        <div class="modal-content">
+            <button class="close-modal-btn" id="close-create-cardboard-box-modal">&times;</button>
+            <h2>Отсканируйте стикер коробки</h2>
+
+            <video src="an.mp4" autoplay loop muted playsinline style="display: block; width: 200px; height: 200px; border-radius: 8px; margin: 0 auto 20px auto; object-fit: contain;"></video>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="new-cardboard-box-code" class="modal-input" style="flex-grow: 1; margin-bottom: 0; text-transform: uppercase;" placeholder="Отсканируйте стикер или введите TRBX и 10 цифр" maxlength="14" inputmode="text" autocapitalize="characters" autocomplete="off" spellcheck="false">
+                <button id="submit-new-cardboard-box-btn" class="primary-btn icon-only" style="flex-shrink: 0;"><i class="fas fa-check"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка ввода количества картона и закрытия коробки -->
+    <div class="fullscreen-modal" id="cardboard-qty-modal">
+        <div class="modal-content">
+            <button class="close-modal-btn" id="close-cardboard-qty-modal">&times;</button>
+            <h2>Количество картона</h2>
+            <div class="cb-qty-modal-code" id="cardboard-qty-box-title"></div>
+            <img src="cardboard_box.png" alt="Картон" class="cb-qty-modal-img">
+            <p>Введите количество картона в коробке</p>
+            <input type="text" id="cardboard-qty-input" class="cb-qty-input" placeholder="0" maxlength="2" inputmode="numeric" autocomplete="off">
+            <button id="cardboard-qty-close-btn" class="primary-btn" style="width: 100%;">Закрыть коробку</button>
+        </div>
+    </div>
+
+    <!-- Нижняя навигация (только телефон) — как на странице коробок -->
+    <div class="mobile-bottom-nav">
+        <div class="mb-nav-item" onclick="location.href='p.html'">
+            <i class="fas fa-dolly"></i>
+            <span>Принять</span>
+        </div>
+        <div class="mb-nav-item" onclick="location.href='index.html'">
+            <i class="fas fa-truck"></i>
+            <span>Выдать</span>
+        </div>
+        <div class="mb-nav-item active" onclick="location.href='returns.html'">
+            <i class="fas fa-undo"></i>
+            <span>Вернуть</span>
+        </div>
+        <div class="mb-nav-item" id="mobile-more-btn">
+            <i class="fas fa-ellipsis-h"></i>
+            <span>Еще</span>
+        </div>
+    </div>
+    <div class="mobile-more-menu" id="mobile-more-menu-content">
+        <div class="mm-item" onclick="location.href='r3.html'">Картон</div>
+        <div class="mm-item" onclick="location.href='r4.html'">Удалить из ПО</div>
+        <div class="mm-item" id="mobile-exit-btn">Выйти</div>
+    </div>
+
+    <div class="help-menu side-panel" id="help-menu"></div>
+    <div class="fullscreen-modal" id="search-modal"></div>
+    <div class="fullscreen-modal" id="qr-code-modal"></div>
+    <div class="fullscreen-modal" id="main-settings-modal"></div>
+    <div class="fullscreen-modal" id="voice-settings-modal"></div>
+    <div class="fullscreen-modal" id="scanner-setup-modal"></div>
+    <div class="fullscreen-modal" id="account-modal"></div>
+    <div id="feedback-modal" class="fullscreen-modal"></div>
+
+    <audio id="sound-scan-box" src="scan_box_sticker.mp3" preload="auto"></audio>
+    <audio id="sound-box-exists" src="box_already_accepted.mp3" preload="auto"></audio>
+    <audio id="sound-box-closed" src="box_closed.mp3" preload="auto"></audio>
+    <audio id="sound-incorrect-sticker" src="incorrect_sticker_code.mp3" preload="auto"></audio>
+    <audio id="sound-fail" src="failScan.mp3" preload="auto"></audio>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="speaker.js"></script>
+    <script src="r3.js"></script>
+    <script src="p_shared.js"></script>
+</body>
+</html>

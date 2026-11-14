@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Мобильный Сканер | WB PVZ</title>
+
+    <link rel="icon" href="scan-ss.png" type="image/png">
+    <link rel="shortcut icon" href="scan-ss.png" type="image/png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root { --primary: #8A2BE2; --bg: #121212; --text: #ffffff; --btn-gray: #5a5a5f; }
+        * { -webkit-tap-highlight-color: transparent; }
+        body {
+            margin: 0; padding: 0; background: var(--bg); color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        /* ---------- Шапка ---------- */
+        .header {
+            background: var(--primary); padding: 12px 15px; font-size: 1.1rem;
+            font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 10; display: flex;
+            justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+        }
+        .header-left { display: flex; align-items: center; gap: 8px; }
+        .header-title { white-space: nowrap; margin-right: 4px; }
+        .status-badge { font-size: 0.8rem; background: #4CAF50; padding: 4px 8px; border-radius: 12px; font-weight: normal; }
+        .status-badge.offline { background: #F44336; }
+
+        /* Кнопки в шапке */
+        .icon-btn {
+            width: 36px; height: 36px; padding: 0; border: none; border-radius: 10px;
+            background: var(--btn-gray); color: #fff; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: background 0.15s, transform 0.1s, opacity 0.15s;
+        }
+        .icon-btn:active { transform: scale(0.92); }
+        .icon-btn img { width: 20px; height: 20px; display: block; filter: brightness(0) invert(1); }
+        .icon-btn svg { width: 20px; height: 20px; display: block; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .icon-btn.active { background: #FFC107; }
+        .icon-btn.active svg { stroke: #222; }
+        .icon-btn.front { background: #2196F3; }
+        .icon-btn.disabled { opacity: 0.4; }
+
+        /* ---------- Область сканирования ---------- */
+        #reader-container {
+            flex-grow: 1; position: relative; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; background: #000; padding: 10px;
+        }
+        #reader { width: 100%; max-width: 400px; border-radius: 12px; overflow: hidden; border: 2px solid #333; }
+
+        .start-btn {
+            background: var(--primary); color: white; border: none; padding: 15px 30px;
+            font-size: 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4); margin-bottom: 20px;
+        }
+
+        /* Кнопка симуляции на всю область сканирования */
+        .sim-btn {
+            display: none; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: none; border-radius: 12px; cursor: pointer; color: #fff;
+            background: linear-gradient(145deg, #9b3df0, #6a1fb8);
+            font-size: 2rem; font-weight: 800; letter-spacing: 3px;
+            align-items: center; justify-content: center; flex-direction: column; gap: 12px;
+            box-shadow: 0 4px 25px rgba(138, 43, 226, 0.45);
+            transition: transform 0.1s, filter 0.2s;
+        }
+        .sim-btn.show { display: flex; }
+        .sim-btn:active { transform: scale(0.985); }
+        .sim-btn i { font-size: 3rem; opacity: 0.9; }
+        .sim-btn .sim-sub { font-size: 0.85rem; font-weight: normal; letter-spacing: 0; opacity: 0.8; }
+        .sim-btn.cooldown { filter: grayscale(0.8) brightness(0.6); pointer-events: none; }
+
+        .controls { padding: 20px; background: #1e1e1e; display: flex; gap: 15px; flex-direction: column; z-index: 10; }
+        .info-text { text-align: center; font-size: 0.9rem; color: #aaa; margin: 0; }
+        .last-scan { font-size: 1.5rem; text-align: center; font-weight: bold; color: var(--primary); min-height: 35px; letter-spacing: 2px; }
+
+        /* ---------- Модальное окно ---------- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100;
+            display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: #1e1e1e; border-radius: 16px; width: 100%; max-width: 360px;
+            padding: 22px 20px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid #333;
+        }
+        .modal h3 { margin: 0 0 18px; font-size: 1.15rem; text-align: center; }
+        .modal-label { font-size: 0.85rem; color: #aaa; margin: 16px 0 8px; }
+        .modal-label:first-of-type { margin-top: 0; }
+
+        .segmented { display: flex; gap: 8px; }
+        .segmented label { flex: 1; cursor: pointer; }
+        .segmented input { display: none; }
+        .segmented span {
+            display: block; text-align: center; padding: 12px 6px; border-radius: 10px;
+            background: #2a2a2e; border: 2px solid #3a3a3f; color: #ddd; font-size: 0.95rem;
+            transition: all 0.15s;
+        }
+        .segmented input:checked + span { background: rgba(138,43,226,0.25); border-color: var(--primary); color: #fff; font-weight: bold; }
+
+        .save-btn {
+            width: 100%; margin-top: 22px; padding: 14px; border: none; border-radius: 10px;
+            background: var(--primary); color: #fff; font-size: 1.05rem; font-weight: bold; cursor: pointer;
+        }
+        .save-btn:active { filter: brightness(0.9); }
+
+        /* ---------- Уведомление ---------- */
+        .toast {
+            position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%) translateY(20px);
+            background: rgba(40,40,45,0.95); color: #fff; padding: 10px 18px; border-radius: 20px;
+            font-size: 0.9rem; opacity: 0; pointer-events: none; transition: all 0.25s; z-index: 200;
+            max-width: 90%; text-align: center;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <span class="header-title"><i class="fas fa-barcode"></i> Сканер</span>
+
+            <!-- Настройки -->
+            <button id="settings-btn" class="icon-btn" title="Настройки">
+                <img src="set.svg" alt="Настройки" onerror="this.outerHTML='<i class=&quot;fas fa-cog&quot;></i>'">
+            </button>
+
+            <!-- Фонарик -->
+            <button id="torch-btn" class="icon-btn" title="Фонарик">
+                <svg viewBox="0 0 24 24">
+                    <path d="M7 2h10l-1.5 5h-7z"/>
+                    <path d="M8.5 7h7v3l-1 1v9a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-9l-1-1z"/>
+                    <path d="M12 13v3"/>
+                </svg>
+            </button>
+
+            <!-- Камера: фронтальная / основная -->
+            <button id="cam-btn" class="icon-btn" title="Сменить камеру">
+                <svg viewBox="0 0 24 24">
+                    <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                    <path d="M9.5 13.5a2.5 2.5 0 0 1 4.3-1.7M14.5 13.5a2.5 2.5 0 0 1-4.3 1.7"/>
+                    <path d="M13.8 10.6v1.4h-1.4M10.2 16.4V15h1.4"/>
+                </svg>
+            </button>
+        </div>
+        <span id="conn-status" class="status-badge offline">Подключение к серверу</span>
+    </div>
+
+    <div id="reader-container">
+        <button id="start-btn" class="start-btn"><i class="fas fa-camera"></i> Запустить камеру</button>
+        <div id="reader" style="display: none;"></div>
+
+        <!-- Кнопка симуляции (только в режиме «Симуляция») -->
+        <button id="sim-btn" class="sim-btn">
+            <i class="fas fa-play-circle"></i>
+            <span>СИМУЛИРОВАТЬ</span>
+            <span class="sim-sub">Отправит любые 10 цифр</span>
+        </button>
+    </div>
+
+    <div class="controls">
+        <div class="last-scan" id="last-scan-display">---</div>
+        <p class="info-text">Отсканированный код автоматически отправится в поле ввода</p>
+    </div>
+
+    <!-- Модальное окно настроек -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal">
+            <h3>Режим сканирования</h3>
+
+            <div class="modal-label">Режим</div>
+            <div class="segmented">
+                <label><input type="radio" name="mode" value="real"><span>Реальный</span></label>
+                <label><input type="radio" name="mode" value="sim"><span>Симуляция</span></label>
+            </div>
+
+            <div class="modal-label">Задержка между сканированиями</div>
+            <div class="segmented">
+                <label><input type="radio" name="delay" value="1"><span>1 сек</span></label>
+                <label><input type="radio" name="delay" value="2"><span>2 сек</span></label>
+                <label><input type="radio" name="delay" value="3"><span>3 сек</span></label>
+            </div>
+
+            <button id="save-settings" class="save-btn">Сохранить</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDoo1pOT8-36p9hxkbQ1eXN86T00l8PnhM",
+            databaseURL: "https://wb-pvz-93bff-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "wb-pvz-93bff",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session');
+        const statusBadge = document.getElementById('conn-status');
+
+        if (!sessionId) {
+            alert('Ошибка: Код сессии не найден. Отсканируйте QR-код с сайта WB PVZ в разделе Работа со сканером');
+            document.body.innerHTML = '<h2 style="text-align:center; margin-top:50px;">Сессия не найдена</h2>';
+        } else {
+            statusBadge.textContent = 'Готов';
+            statusBadge.classList.remove('offline');
+
+            // ---------- Элементы ----------
+            const startBtn = document.getElementById('start-btn');
+            const readerDiv = document.getElementById('reader');
+            const simBtn = document.getElementById('sim-btn');
+            const settingsBtn = document.getElementById('settings-btn');
+            const torchBtn = document.getElementById('torch-btn');
+            const camBtn = document.getElementById('cam-btn');
+            const modal = document.getElementById('settings-modal');
+            const saveBtn = document.getElementById('save-settings');
+            const display = document.getElementById('last-scan-display');
+            const toastEl = document.getElementById('toast');
+
+            // ---------- Звук ----------
+            const scanSound = new Audio('scan.mp3');
+            scanSound.preload = 'auto';
+            let audioUnlocked = false;
+
+            // Мобильные браузеры разрешают звук только после касания — "разблокируем" при первом тапе
+            function unlockAudio() {
+                if (audioUnlocked) return;
+                audioUnlocked = true;
+                scanSound.muted = true;
+                const p = scanSound.play();
+                const restore = () => { scanSound.pause(); scanSound.currentTime = 0; scanSound.muted = false; };
+                if (p && p.then) { p.then(restore).catch(() => { scanSound.muted = false; audioUnlocked = false; }); }
+                else { restore(); }
+            }
+            document.addEventListener('pointerdown', unlockAudio, { once: true });
+
+            function playScanSound() {
+                try {
+                    scanSound.currentTime = 0;
+                    const p = scanSound.play();
+                    if (p && p.catch) p.catch(() => {});
+                } catch (e) {}
+            }
+
+            // ---------- Настройки ----------
+            const SETTINGS_KEY = 'wbpvz_scanner_settings';
+            let settings = { mode: 'real', delay: 1 };
+            try {
+                const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+                if (saved) {
+                    if (saved.mode === 'real' || saved.mode === 'sim') settings.mode = saved.mode;
+                    if ([1, 2, 3].includes(Number(saved.delay))) settings.delay = Number(saved.delay);
+                }
+            } catch (e) {}
+
+            function saveSettingsToStorage() {
+                try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch (e) {}
+            }
+
+            // ---------- Уведомления ----------
+            let toastTimer;
+            function showToast(text) {
+                toastEl.textContent = text;
+                toastEl.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+            }
+
+            // ---------- Состояние камеры ----------
+            let html5QrCode = null;
+            let cameraRunning = false;
+            let cameraBusy = false;
+            let useFront = false;   // false = основная, true = фронтальная
+            let torchOn = false;
+
+            const scanConfig = { fps: 15, qrbox: { width: 250, height: 250 } };
+
+            function updateUI() {
+                const isSim = settings.mode === 'sim';
+
+                simBtn.classList.toggle('show', isSim);
+
+                if (isSim) {
+                    startBtn.style.display = 'none';
+                    readerDiv.style.display = 'none';
+                } else if (cameraRunning) {
+                    startBtn.style.display = 'none';
+                    readerDiv.style.display = 'block';
+                } else {
+                    startBtn.style.display = 'block';
+                    readerDiv.style.display = 'none';
+                }
+
+                torchBtn.classList.toggle('active', torchOn);
+                torchBtn.classList.toggle('disabled', isSim || !cameraRunning);
+                camBtn.classList.toggle('front', useFront);
+                camBtn.classList.toggle('disabled', isSim);
+                camBtn.title = useFront ? 'Фронтальная камера (нажмите для основной)' : 'Основная камера (нажмите для фронтальной)';
+            }
+
+            async function startCamera() {
+                if (cameraBusy) return;
+                cameraBusy = true;
+
+                if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+                    alert('Внимание: Камера работает только по протоколу HTTPS. Возможна ошибка доступа.');
+                }
+
+                startBtn.style.display = 'none';
+                readerDiv.style.display = 'block';
+
+                try {
+                    html5QrCode = new Html5Qrcode("reader");
+                    await html5QrCode.start(
+                        { facingMode: useFront ? "user" : "environment" },
+                        scanConfig,
+                        onScanSuccess
+                    );
+                    cameraRunning = true;
+                    torchOn = false;
+                } catch (err) {
+                    cameraRunning = false;
+                    torchOn = false;
+                    alert("Ошибка доступа к камере. Разрешите камеру в браузере.\n" + err);
+                } finally {
+                    cameraBusy = false;
+                    updateUI();
+                }
+            }
+
+            async function stopCamera() {
+                if (html5QrCode && cameraRunning) {
+                    try { await html5QrCode.stop(); } catch (e) {}
+                    try { html5QrCode.clear(); } catch (e) {}
+                }
+                cameraRunning = false;
+                torchOn = false;
+                html5QrCode = null;
+            }
+
+            startBtn.addEventListener('click', () => {
+                unlockAudio();
+                startCamera();
+            });
+
+            // ---------- Фонарик ----------
+            async function applyTorch(on) {
+                // Способ 1: через библиотеку
+                try {
+                    const torch = html5QrCode.getRunningTrackCameraCapabilities().torchFeature();
+                    if (torch.isSupported()) {
+                        await torch.apply(on);
+                        return true;
+                    }
+                } catch (e) {}
+
+                // Способ 2: напрямую через видеотрек
+                try {
+                    const video = document.querySelector('#reader video');
+                    const track = video && video.srcObject && video.srcObject.getVideoTracks()[0];
+                    if (track) {
+                        const caps = track.getCapabilities ? track.getCapabilities() : {};
+                        if (caps.torch) {
+                            await track.applyConstraints({ advanced: [{ torch: on }] });
+                            return true;
+                        }
+                    }
+                } catch (e) {}
+
+                return false;
+            }
+
+            torchBtn.addEventListener('click', async () => {
+                if (settings.mode === 'sim') { showToast('Фонарик доступен в режиме «Реальный»'); return; }
+                if (!cameraRunning || !html5QrCode) { showToast('Сначала запустите камеру'); return; }
+
+                const target = !torchOn;
+                const ok = await applyTorch(target);
+                if (ok) {
+                    torchOn = target;
+                } else {
+                    torchOn = false;
+                    showToast('Фонарик недоступен на этой камере');
+                }
+                updateUI();
+            });
+
+            // ---------- Смена камеры ----------
+            camBtn.addEventListener('click', async () => {
+                if (settings.mode === 'sim') { showToast('Камера доступна в режиме «Реальный»'); return; }
+                if (cameraBusy) return;
+
+                useFront = !useFront;
+                showToast(useFront ? 'Фронтальная камера' : 'Основная камера');
+
+                if (cameraRunning) {
+                    cameraBusy = true;
+                    await stopCamera();
+                    cameraBusy = false;
+                    await startCamera();
+                } else {
+                    updateUI();
+                }
+            });
+
+            // ---------- Отправка кода + задержка ----------
+            let cooldownUntil = 0;
+            let cooldownTimer;
+
+            function startCooldown() {
+                cooldownUntil = Date.now() + settings.delay * 1000;
+                simBtn.classList.add('cooldown');
+                clearTimeout(cooldownTimer);
+                cooldownTimer = setTimeout(() => {
+                    display.style.color = "var(--primary)";
+                    simBtn.classList.remove('cooldown');
+                }, settings.delay * 1000);
+            }
+
+            function resetCooldown() {
+                cooldownUntil = 0;
+                clearTimeout(cooldownTimer);
+                simBtn.classList.remove('cooldown');
+            }
+
+            function sendCode(code) {
+                // пока идёт задержка — игнорируем любые сканирования
+                if (Date.now() < cooldownUntil) return;
+                startCooldown();
+
+                if (navigator.vibrate) navigator.vibrate(200);
+                playScanSound();
+
+                display.textContent = code;
+                display.style.color = "#4CAF50";
+
+                database.ref('scans/' + sessionId).push({
+                    code: code,
+                    timestamp: Date.now()
+                }).catch((err) => {
+                    alert("Ошибка отправки данных: " + err.message);
+                    resetCooldown();
+                    display.style.color = "var(--primary)";
+                });
+            }
+
+            // Реальное сканирование камерой
+            function onScanSuccess(decodedText) {
+                if (settings.mode !== 'real') return;
+                sendCode(decodedText);
+            }
+
+            // Симуляция: любые 10 цифр
+            function randomDigits(n) {
+                let s = '';
+                for (let i = 0; i < n; i++) s += Math.floor(Math.random() * 10);
+                return s;
+            }
+
+            simBtn.addEventListener('click', () => {
+                unlockAudio();
+                sendCode(randomDigits(10));
+            });
+
+            // ---------- Модальное окно ----------
+            function openSettings() {
+                document.querySelector('input[name="mode"][value="' + settings.mode + '"]').checked = true;
+                document.querySelector('input[name="delay"][value="' + settings.delay + '"]').checked = true;
+                modal.classList.add('show');
+            }
+
+            function closeSettings() {
+                modal.classList.remove('show');
+            }
+
+            settingsBtn.addEventListener('click', openSettings);
+
+            // клик по тёмному фону закрывает окно без сохранения
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeSettings(); });
+
+            saveBtn.addEventListener('click', async () => {
+                unlockAudio();
+                const newMode = document.querySelector('input[name="mode"]:checked').value;
+                const newDelay = Number(document.querySelector('input[name="delay"]:checked').value);
+
+                const modeChanged = newMode !== settings.mode;
+                settings.mode = newMode;
+                settings.delay = newDelay;
+                saveSettingsToStorage();
+                closeSettings();
+
+                // при переходе в симуляцию выключаем камеру и фонарик
+                if (modeChanged && newMode === 'sim') {
+                    await stopCamera();
+                }
+
+                resetCooldown();
+                updateUI();
+                showToast('Сохранено');
+            });
+
+            updateUI();
+        }
+    </script>
+</body>
+</html>
